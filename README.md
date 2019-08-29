@@ -1,2 +1,2 @@
-# psi_by_example
+# PSI By Example
 Linux Pressure Stall Information by Example

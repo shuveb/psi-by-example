@@ -175,6 +175,12 @@ void load_disk() {
     printf("\nOr with sudo:\n");
     printf("echo 3 | sudo tee /proc/sys/vm/drop_caches\n");
     printf("********************************************************************************\n");
+
+    /* Free allocated memory */
+    i = 0;
+    while (root_dir_entries[i++] != NULL)
+        free(root_dir_entries[i]);
+    free(root_dir_entries);
 }
 
 /*

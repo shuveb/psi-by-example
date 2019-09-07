@@ -22,14 +22,23 @@
 #define FD_CPU_IDX                  0
 #define FD_IO_IDX                   1
 #define FD_MEMORY_IDX               2
+
+#define IDX                         3
 #define CONTENT_SZ                  120
 
-struct pollfd fds[3];
-char time_str[26];
+#define ERROR_KERNEL_UNSUPPORTED    1
+#define ERROR_PRESSURE_OPEN         2 
+#define ERROR_PRESSURE_WRITE        3 
+#define ERROR_PRESSURE_POLL_FDS     4
+#define ERROR_PRESSURE_FILE_GONE    5
+#define ERROR_PRESSURE_EVENT_UNK    6   
+
+struct pollfd fds[IDX];
+char *time_str;
 char content_str[CONTENT_SZ];
-char *pressure_file[3];
-int trigger_threshold_ms[3];
-int tracking_window_s[3];
+char *pressure_file[IDX];
+int trigger_threshold_ms[IDX];
+int tracking_window_s[IDX];
 
 void set_time_str() {
     time_t now;
@@ -53,11 +62,12 @@ void set_content_str(int psi_idx) {
 
 void setup_polling() {
     char trigger[256];
-    for (int i = 0; i < 3; i++) {
+    
+    for (int i = 0; i < IDX; i++) {
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
         if (fds[i].fd < 0) {
-        printf("Error open() pressure file %s:", pressure_file[i]);
-        exit(2);
+            fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
+            exit(ERROR_PRESSURE_OPEN);
         }
         fds[i].events = POLLPRI;
         snprintf(trigger, 256, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
@@ -65,29 +75,35 @@ void setup_polling() {
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
         if (write(fds[i].fd, trigger, strlen(trigger) + 1) < 0) {
-            printf("Error write() pressure file %s:", pressure_file[i]);
-            exit(3);
+            fprintf(stderr, "Error write() pressure file %s:", pressure_file[i]);
+            exit(ERROR_PRESSURE_WRITE);
         }
     }
 }
 
 void wait_for_notification() {
-    int event_counter[3];
+    int event_counter[IDX];
 
-    event_counter[0] = event_counter[1] = event_counter[2] = 1;
+    for (int i = 0; i < IDX; i++)  {
+        event_counter[i] = 1;
+    }
 
     printf("\nWaiting for events...\n");
     while (1) {
-        int n = poll(fds, 3, -1);
+        int n = poll(fds, IDX, -1);
+        if (n < 0) {
+            fprintf(stderr, "Error using poll() function");
+            exit(ERROR_PRESSURE_POLL_FDS);
+        }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < IDX; i++) {
             if (fds[i].revents == 0) {
                 printf("%d no event ", i);
                 continue;
             }
             if (fds[i].revents & POLLERR) {
                 fprintf(stderr, "Error: poll() event source is gone.\n");
-                exit(1);
+                exit(ERROR_PRESSURE_FILE_GONE);
             }
             if (fds[i].events) {
                 set_time_str();
@@ -95,20 +111,19 @@ void wait_for_notification() {
                 printf("%i %s %s\n", event_counter[i]++, pressure_file[i], content_str);
             } else {
                 fprintf(stderr, "Unrecognized event: 0x%x.\n", fds[i].revents);
-                exit(2);
+                exit(ERROR_PRESSURE_EVENT_UNK);
             }
         }
     }
 }
 
-void check_basics() {
+void verify_proc_pressure() {
     struct stat st;
     int sret = stat(CPU_PRESSURE_FILE, &st);
 
     if (sret == -1) {
-        fprintf(stderr, "Error! Your kernel does not expose pressure stall information.\n");
-        fprintf(stderr, "You may want to check if you have Linux Kernel v5.2+ with PSI enabled.\n");
-        exit(1);
+        fprintf(stderr, "To monitor with poll() in Linux, uname -r must report a kernel version of 5.2+\n");
+        exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
         set_time_str();
         puts(time_str);
@@ -129,7 +144,7 @@ void populate() {
 
 int main() {
     populate();
-    check_basics();
+    verify_proc_pressure();
     setup_polling();
     wait_for_notification();
     return 0;

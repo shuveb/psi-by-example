@@ -49,7 +49,7 @@ void set_time_str() {
 
     time(&now);
     tm_info = localtime(&now);
-    strftime(time_str, SZ_TIME, "%T", tm_info);
+    strftime(time_str, SZ_TIME, "%s", tm_info);
 }
 
 void set_content_str(int psi_idx) {

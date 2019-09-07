@@ -24,6 +24,9 @@
 #define FD_IO_IDX                   1
 #define FD_MEMORY_IDX               2
 
+#define FMT_YMD_HMS                 0
+#define FMT_EPOCH                   1
+
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
 #define SZ_TIME                     26
@@ -43,13 +46,16 @@ char *pressure_file[SZ_IDX];
 int trigger_threshold_ms[SZ_IDX];
 int tracking_window_ms[SZ_IDX];
 
-void set_time_str() {
+void set_time_str(int fmt) {
     time_t now;
     struct tm* tm_info;
 
     time(&now);
     tm_info = localtime(&now);
-    strftime(time_str, SZ_TIME, "%T", tm_info);
+    if (fmt == FMT_EPOCH)
+        strftime(time_str, SZ_TIME, "%s", tm_info);
+    else
+        strftime(time_str, SZ_TIME, "%T", tm_info);
 }
 
 void set_content_str(int psi_idx) {
@@ -111,10 +117,9 @@ void pressure_event_loop() {
                 exit(ERROR_PRESSURE_FILE_GONE);
             }
             if (fds[i].events) {
-                set_time_str();
+                set_time_str(FMT_EPOCH);
                 set_content_str(i);
-                printf("%i %s %s %s\n", event_counter[i]++, time_str,
-                        pressure_file[i], content_str);
+                printf("%i %s %s %s\n", pressure_file[i], event_counter[i]++, time_str,content_str);
             } else {
                 fprintf(stderr, "Unrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
@@ -132,7 +137,7 @@ void verify_proc_pressure() {
                 "To monitor with poll() in Linux, uname -r must report a kernel version of 5.2+\n");
         exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
-        set_time_str();
+        set_time_str(FMT_YMD_HMS);
         printf("Polling events starting at %s", time_str);
     }
 }

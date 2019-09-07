@@ -23,10 +23,10 @@
 #define FD_IO_IDX                   1
 #define FD_MEMORY_IDX               2
 
-#define IDX                         3
-#define CONTENT_SZ                  128
-#define TIME_SZ                     26
-#define TRIGGER_SZ                  256
+#define SZ_IDX                      3
+#define SZ_CONTENT                  128
+#define SZ_TIME                     26
+#define SZ_TRIGGER                  256
 
 #define ERROR_KERNEL_UNSUPPORTED    1
 #define ERROR_PRESSURE_OPEN         2 
@@ -35,14 +35,14 @@
 #define ERROR_PRESSURE_FILE_GONE    5
 #define ERROR_PRESSURE_EVENT_UNK    6   
 
-struct pollfd fds[IDX];
+struct pollfd fds[SZ_IDX];
 char *time_str;
-char content_str[CONTENT_SZ];
-char *pressure_file[IDX];
-long time_sz = TIME_SZ;
-int trigger_sz = TRIGGER_SZ;
-int trigger_threshold_ms[IDX];
-int tracking_window_s[IDX];
+char content_str[SZ_CONTENT];
+char *pressure_file[SZ_IDX];
+long time_sz = SZ_TIME;
+int trigger_sz = SZ_TRIGGER;
+int trigger_threshold_ms[SZ_IDX];
+int tracking_window_s[SZ_IDX];
 
 void set_time_str() {
     time_t now;
@@ -57,16 +57,16 @@ void set_content_str(int psi_idx) {
     int bytes_read;
     int fd;
 
-    memset(&(content_str[0]), 0, CONTENT_SZ);
+    memset(&(content_str[0]), 0, SZ_CONTENT);
     fd = open (pressure_file[psi_idx], O_NONBLOCK | O_RDONLY );
-    bytes_read = read(fd, content_str, CONTENT_SZ);
+    bytes_read = read(fd, content_str, SZ_CONTENT);
     close(fd);
 }
 
 void poll_pressure_events() {
     char trigger[trigger_sz];
     
-    for (int i = 0; i < IDX; i++) {
+    for (int i = 0; i < SZ_IDX; i++) {
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
         if (fds[i].fd < 0) {
             fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
@@ -84,22 +84,22 @@ void poll_pressure_events() {
     }
 }
 
-void wait_pressure_events() {
-    int event_counter[IDX];
+void pressure_event_loop() {
+    int event_counter[SZ_IDX];
 
-    for (int i = 0; i < IDX; i++)  {
+    for (int i = 0; i < SZ_IDX; i++)  {
         event_counter[i] = 1;
     }
 
     printf("\nWaiting for events...\n");
     while (1) {
-        int n = poll(fds, IDX, -1);
+        int n = poll(fds, SZ_IDX, -1);
         if (n < 0) {
             fprintf(stderr, "Error using poll() function");
             exit(ERROR_PRESSURE_POLL_FDS);
         }
 
-        for (int i = 0; i < IDX; i++) {
+        for (int i = 0; i < SZ_IDX; i++) {
             if (fds[i].revents == 0) {
                 continue;
             }
@@ -148,5 +148,5 @@ int main() {
     populate_arrays();
     verify_proc_pressure();
     poll_pressure_events();
-    wait_pressure_events();
+    pressure_event_loop();
 }

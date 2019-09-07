@@ -123,21 +123,21 @@ void check_basics() {
 }
 
 void populate(){
-	pressure_file[0] = "/proc/pressure/cpu";
-	pressure_file[1] = "/proc/pressure/io";
-	pressure_file[2] = "/proc/pressure/memory";
-	trigger_threshold_ms[0] = CPU_TRIGGER_THRESHOLD_MS;
-	trigger_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
-	trigger_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
-	tracking_window_s[0] = CPU_TRACKING_WINDOW_SECS;
-	tracking_window_s[1] = IO_TRACKING_WINDOW_SECS;
-	tracking_window_s[2] = MEMORY_TRACKING_WINDOW_SECS;
+    pressure_file[0] = "/proc/pressure/cpu";
+    pressure_file[1] = "/proc/pressure/io";
+    pressure_file[2] = "/proc/pressure/memory";
+    trigger_threshold_ms[0] = CPU_TRIGGER_THRESHOLD_MS;
+    trigger_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
+    trigger_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
+    tracking_window_s[0] = CPU_TRACKING_WINDOW_SECS;
+    tracking_window_s[1] = IO_TRACKING_WINDOW_SECS;
+    tracking_window_s[2] = MEMORY_TRACKING_WINDOW_SECS;
 }
 
 int main() {
-	populate();
-	check_basics();
-	setup_polling();
-	wait_for_notification();
-	return 0;
+    populate();
+    check_basics();
+    setup_polling();
+    wait_for_notification();
+    return 0;
 }

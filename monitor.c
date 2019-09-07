@@ -7,9 +7,10 @@
 #include <string.h>
 #include <time.h>
 
-#define CPU_TRACKING_WINDOW_SECS    1
-#define IO_TRACKING_WINDOW_SECS     2
-#define MEMORY_TRACKING_WINDOW_SECS 3
+#define CPU_TRACKING_WINDOW_MS      1000
+#define IO_TRACKING_WINDOW_MS       750
+#define MEMORY_TRACKING_WINDOW_MS   500
+#define MS_TO_MU                    1000
 
 #define CPU_TRIGGER_THRESHOLD_MS    50
 #define IO_TRIGGER_THRESHOLD_MS     60
@@ -40,13 +41,13 @@ char    time_str[SZ_TIME];
 struct  pollfd fds[SZ_IDX];
 char    *pressure_file[SZ_IDX];
 int     trigger_threshold_ms[SZ_IDX];
-int     tracking_window_s[SZ_IDX];
+int     tracking_window_ms[SZ_IDX];
 
 void set_time_str() {
     time_t now;
     struct tm* tm_info;
 
-    time(&now); // get the current time
+    time(&now); 
     tm_info = localtime(&now);
     strftime(time_str, SZ_TIME, "%Y-%m-%d %H:%M:%S ", tm_info);
 }
@@ -73,7 +74,7 @@ void poll_pressure_events() {
             exit(ERROR_PRESSURE_OPEN);
         }
         fds[i].events = POLLPRI;
-        snprintf(distress_event, SZ_EVENT, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
+        snprintf(distress_event, SZ_EVENT, "some %d %d", trigger_threshold_ms[i] * MS_TO_MU, tracking_window_ms[i] * MS_TO_MU);
         printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
@@ -139,9 +140,9 @@ void populate_arrays() {
     trigger_threshold_ms[0] = CPU_TRIGGER_THRESHOLD_MS;
     trigger_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
     trigger_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
-    tracking_window_s[0] = CPU_TRACKING_WINDOW_SECS;
-    tracking_window_s[1] = IO_TRACKING_WINDOW_SECS;
-    tracking_window_s[2] = MEMORY_TRACKING_WINDOW_SECS;
+    tracking_window_ms[0] = CPU_TRACKING_WINDOW_MS;
+    tracking_window_ms[1] = IO_TRACKING_WINDOW_MS;
+    tracking_window_ms[2] = MEMORY_TRACKING_WINDOW_MS;
 }
 
 int main() {

@@ -26,7 +26,7 @@
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
 #define SZ_TIME                     26
-#define SZ_EVENT                  256
+#define SZ_EVENT                    256
 
 #define ERROR_KERNEL_UNSUPPORTED    1
 #define ERROR_PRESSURE_OPEN         2 

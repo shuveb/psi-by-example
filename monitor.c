@@ -26,7 +26,7 @@
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
 #define SZ_TIME                     26
-#define SZ_TRIGGER                  256
+#define SZ_EVENT                  256
 
 #define ERROR_KERNEL_UNSUPPORTED    1
 #define ERROR_PRESSURE_OPEN         2 
@@ -35,14 +35,12 @@
 #define ERROR_PRESSURE_FILE_GONE    5
 #define ERROR_PRESSURE_EVENT_UNK    6   
 
-struct pollfd fds[SZ_IDX];
-char *time_str;
-char content_str[SZ_CONTENT];
-char *pressure_file[SZ_IDX];
-long time_sz = SZ_TIME;
-int trigger_sz = SZ_TRIGGER;
-int trigger_threshold_ms[SZ_IDX];
-int tracking_window_s[SZ_IDX];
+char    content_str[SZ_CONTENT];
+char    time_str[SZ_TIME];
+struct  pollfd fds[SZ_IDX];
+char    *pressure_file[SZ_IDX];
+int     trigger_threshold_ms[SZ_IDX];
+int     tracking_window_s[SZ_IDX];
 
 void set_time_str() {
     time_t now;
@@ -50,7 +48,7 @@ void set_time_str() {
 
     time(&now); // get the current time
     tm_info = localtime(&now);
-    strftime(time_str, time_sz, "%Y-%m-%d %H:%M:%S ", tm_info);
+    strftime(time_str, SZ_TIME, "%Y-%m-%d %H:%M:%S ", tm_info);
 }
 
 void set_content_str(int psi_idx) {
@@ -64,20 +62,22 @@ void set_content_str(int psi_idx) {
 }
 
 void poll_pressure_events() {
-    char trigger[trigger_sz];
+    char distress_event[SZ_EVENT];
     
     for (int i = 0; i < SZ_IDX; i++) {
+
+        memset(&(distress_event[0]), 0, SZ_EVENT);
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
         if (fds[i].fd < 0) {
             fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
             exit(ERROR_PRESSURE_OPEN);
         }
         fds[i].events = POLLPRI;
-        snprintf(trigger, trigger_sz, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
-        printf("\n%s trigger:\n%s\n", pressure_file[i], trigger);
+        snprintf(distress_event, SZ_EVENT, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
+        printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
-        if (write(fds[i].fd, trigger, strlen(trigger) + 1) < 0) {
+        if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
             fprintf(stderr, "Error write() pressure file %s:", pressure_file[i]);
             exit(ERROR_PRESSURE_WRITE);
         }

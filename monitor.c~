@@ -1,34 +1,45 @@
 #include <stdio.h>
 #include <poll.h>
 #include <fcntl.h>
+#include <signal.h> 
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
 
-#define CPU_TRACKING_WINDOW_MS      1000
-#define IO_TRACKING_WINDOW_MS       750
-#define MEMORY_TRACKING_WINDOW_MS   500
-#define MS_TO_MU                    1000
+/* kernel accepts window sizes ranging from 500ms to 10s */
+#define CPU_TRACKING_WINDOW_MS      500     // 0.5 seconds
+#define IO_TRACKING_WINDOW_MS       1000    // 1 second
+#define MEMORY_TRACKING_WINDOW_MS   10000   // 10 seconds 
+#define MS_TO_US                    1000    // millisecs to microseconds factor
 
-#define CPU_TRIGGER_THRESHOLD_MS    50
-#define IO_TRIGGER_THRESHOLD_MS     60
-#define MEMORY_TRIGGER_THRESHOLD_MS 70
+/* min monitoring update interval is 50ms and max is 1s */
+#define CPU_TRIGGER_THRESHOLD_MS    50      // 50 ms
+#define IO_TRIGGER_THRESHOLD_MS     100     // 0.1 second
+#define MEMORY_TRIGGER_THRESHOLD_MS 1000    // 1 second
 
+/* paths to the pressure stall information files writable by kernel 5.2+ */
 #define CPU_PRESSURE_FILE           "/proc/pressure/cpu"
 #define IO_PRESSURE_FILE            "/proc/pressure/io"
 #define MEMORY_PRESSURE_FILE        "/proc/pressure/memory"
 
+/* index values to refer to each of the pressure files */
 #define FD_CPU_IDX                  0
 #define FD_IO_IDX                   1
 #define FD_MEMORY_IDX               2
 
+/* format values to refer to '%T' vs '%s' time formats */
+#define FMT_YMD_HMS                 0
+#define FMT_EPOCH                   1
+
+/* size values for the length of different char arrays */
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
 #define SZ_TIME                     26
 #define SZ_EVENT                    256
 
+/* errors defined to differentiate program exit values */
 #define ERROR_KERNEL_UNSUPPORTED    1
 #define ERROR_PRESSURE_OPEN         2 
 #define ERROR_PRESSURE_WRITE        3 
@@ -36,20 +47,43 @@
 #define ERROR_PRESSURE_FILE_GONE    5
 #define ERROR_PRESSURE_EVENT_UNK    6   
 
-char content_str[SZ_CONTENT];
-char time_str[SZ_TIME];
+/* global variables for polling file descriptor, char and int arrays */
 struct pollfd fds[SZ_IDX];
+char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
+char time_str[SZ_TIME];
 int trigger_threshold_ms[SZ_IDX];
 int tracking_window_ms[SZ_IDX];
+int continue_event_loop = 1;
 
-void set_time_str(char fmt) {
+/* close all file descriptors before exiting */
+void close_fds(){
+    fprintf(stderr, "Please wait until all three file descriptors are closed\n");
+    for (int i=0; i < SZ_IDX; i++){
+        fprintf(stderr, "Closing file descriptor fds[%i] for %s\n", i, pressure_file[i]);
+        usleep(tracking_window_ms[i] * MS_TO_US);
+        close(fds[i].fd);
+    }
+    fprintf(stderr, "\nAll file descriptors now closed, exiting now!\n");
+}
+/* signal handler for SIGINT */
+void sigint_handler(int sig_num) 
+{ 
+    /* Reset handler to catch SIGINT next time. 
+       Refer http://en.cppreference.com/w/c/program/signal */
+    printf("\nTerminating in response to Ctrl+C \n"); 
+    signal(SIGINT, sigint_handler); 
+    continue_event_loop = 0; 
+    close_fds(); 
+    fflush(stdout); 
+}
+void set_time_str(int fmt) {
     time_t now;
     struct tm* tm_info;
 
     time(&now);
     tm_info = localtime(&now);
-    if (fmt == 's')
+    if (fmt == FMT_EPOCH)
         strftime(time_str, SZ_TIME, "%s", tm_info);
     else
         strftime(time_str, SZ_TIME, "%T", tm_info);
@@ -77,8 +111,8 @@ void poll_pressure_events() {
         }
         fds[i].events = POLLPRI;
         snprintf(distress_event, SZ_EVENT, "some %d %d",
-                trigger_threshold_ms[i] * MS_TO_MU,
-                tracking_window_ms[i] * MS_TO_MU);
+                trigger_threshold_ms[i] * MS_TO_US,
+                tracking_window_ms[i] * MS_TO_US);
         printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
@@ -98,27 +132,28 @@ void pressure_event_loop() {
     }
 
     printf("\nWaiting for events...\n");
-    while (1) {
+    while (continue_event_loop) {
         int n = poll(fds, SZ_IDX, -1);
+        if (continue_event_loop == 0) break;
         if (n < 0) {
-            fprintf(stderr, "Error using poll() function");
+            fprintf(stderr, "\nError using poll() function\n");
             exit(ERROR_PRESSURE_POLL_FDS);
         }
 
         for (int i = 0; i < SZ_IDX; i++) {
-            if (fds[i].revents == 0) {
+            if ((fds[i].revents == 0) || (continue_event_loop == 0)) {
                 continue;
             }
             if (fds[i].revents & POLLERR) {
-                fprintf(stderr, "Error: poll() event source is gone.\n");
+                fprintf(stderr, "\nError: poll() event source is gone.\n");
                 exit(ERROR_PRESSURE_FILE_GONE);
             }
             if (fds[i].events) {
-                set_time_str("s");
+                set_time_str(FMT_EPOCH);
                 set_content_str(i);
                 printf("%i %s %s %s\n", pressure_file[i], event_counter[i]++, time_str,content_str);
             } else {
-                fprintf(stderr, "Unrecognized event: 0x%x.\n", fds[i].revents);
+                fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
             }
         }
@@ -134,7 +169,7 @@ void verify_proc_pressure() {
                 "To monitor with poll() in Linux, uname -r must report a kernel version of 5.2+\n");
         exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
-        set_time_str("t");
+        set_time_str(FMT_YMD_HMS);
         printf("Polling events starting at %s", time_str);
     }
 }
@@ -155,5 +190,6 @@ int main() {
     populate_arrays();
     verify_proc_pressure();
     poll_pressure_events();
+    signal(SIGINT, sigint_handler);
     pressure_event_loop();
 }

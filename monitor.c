@@ -53,7 +53,6 @@ void set_content_str(int psi_idx)
 }
 
 void setup_polling() {
-    /* Setup PSI triggers */
     char trigger[256];
     for (int i = 0; i < 3; i++) {
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
@@ -74,16 +73,12 @@ void setup_polling() {
 }
 
 void wait_for_notification() {
-    int cpu_event_counter = 1;
-    int io_event_counter = 1;
-    int memory_event_counter = 1;
+    int event_counter[3];
 
+    event_counter[0] = event_counter[1] = event_counter[2] = 0;
     printf("\nWaiting for events...\n");
-
     while (1) {
-       //
-        int n;
-        n = poll(fds, 3, -1);
+        int n = poll(fds, 3, -1);
 
         for (int i = 0; i < 3; i++) {
             if (fds[i].revents == 0) {
@@ -97,7 +92,7 @@ void wait_for_notification() {
             if (fds[i].events) {
                 set_time_str();
                 set_content_str(i);
-                printf("%s content:\n%s\n", pressure_file[i], content_str);
+                printf("%i %s %s\n", event_counter[i]++, pressure_file[i], content_str);
             } else {
                 fprintf(stderr, "Unrecognized event: 0x%x.\n", fds[i].revents);
                 exit(2);
@@ -109,6 +104,7 @@ void wait_for_notification() {
 void check_basics() {
     struct stat st;
     int sret = stat(CPU_PRESSURE_FILE, &st);
+
     if (sret == -1) {
         fprintf(stderr, "Error! Your kernel does not expose pressure stall information.\n");
         fprintf(stderr, "You may want to check if you have Linux Kernel v5.2+ with PSI enabled.\n");

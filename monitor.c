@@ -40,8 +40,7 @@ void set_time_str() {
     strftime(time_str, 26, "%Y-%m-%d %H:%M:%S ", tm_info);
 }
 
-void set_content_str(int psi_idx)
-{
+void set_content_str(int psi_idx) {
     int bytes_read;
     int fd;
 
@@ -75,7 +74,8 @@ void setup_polling() {
 void wait_for_notification() {
     int event_counter[3];
 
-    event_counter[0] = event_counter[1] = event_counter[2] = 0;
+    event_counter[0] = event_counter[1] = event_counter[2] = 1;
+
     printf("\nWaiting for events...\n");
     while (1) {
         int n = poll(fds, 3, -1);
@@ -115,7 +115,7 @@ void check_basics() {
     }
 }
 
-void populate(){
+void populate() {
     pressure_file[0] = "/proc/pressure/cpu";
     pressure_file[1] = "/proc/pressure/io";
     pressure_file[2] = "/proc/pressure/memory";

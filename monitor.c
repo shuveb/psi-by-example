@@ -53,6 +53,7 @@ struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
 char time_str[SZ_TIME];
+char epoch_str[SZ_EPOCH];
 int trigger_threshold_ms[SZ_IDX];
 int tracking_window_ms[SZ_IDX];
 int continue_event_loop = 1;
@@ -152,7 +153,7 @@ void pressure_event_loop() {
             if (fds[i].events) {
                 set_time_str(FMT_EPOCH);
                 set_content_str(i);
-                printf("%i %s %s %s\n", pressure_file[i], event_counter[i]++, time_str,content_str);
+                printf("%i %s %s %s\n", pressure_file[i], event_counter[i]++, epoch_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);

@@ -36,8 +36,9 @@
 /* size values for the length of different char arrays */
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
-#define SZ_TIME                     26
 #define SZ_EVENT                    256
+#define SZ_TIME                     26
+#define SZ_EPOCH                    11
 
 /* errors defined to differentiate program exit values */
 #define ERROR_KERNEL_UNSUPPORTED    1
@@ -84,7 +85,7 @@ void set_time_str(int fmt) {
     time(&now);
     tm_info = localtime(&now);
     if (fmt == FMT_EPOCH)
-        strftime(time_str, SZ_TIME, "%s", tm_info);
+        strftime(time_str, SZ_EPOCH, "%s", tm_info);
     else
         strftime(time_str, SZ_TIME, "%T", tm_info);
 }

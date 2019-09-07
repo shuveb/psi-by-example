@@ -136,8 +136,8 @@ void populate(){
 
 int main() {
 	populate();
-    check_basics();
-    setup_polling();
-    wait_for_notification();
-    return 0;
+	check_basics();
+	setup_polling();
+	wait_for_notification();
+	return 0;
 }

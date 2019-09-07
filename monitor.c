@@ -86,7 +86,7 @@ void set_time_str(int fmt) {
     time(&now);
     tm_info = localtime(&now);
     if (fmt == FMT_EPOCH)
-        strftime(time_str, SZ_EPOCH, "%s", tm_info);
+        strftime(epoch_str, SZ_EPOCH, "%s", tm_info);
     else
         strftime(time_str, SZ_TIME, "%T", tm_info);
 }

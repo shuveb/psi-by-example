@@ -24,7 +24,9 @@
 #define FD_MEMORY_IDX               2
 
 #define IDX                         3
-#define CONTENT_SZ                  120
+#define CONTENT_SZ                  128
+#define TIME_SZ                     26
+#define TRIGGER_SZ                  256
 
 #define ERROR_KERNEL_UNSUPPORTED    1
 #define ERROR_PRESSURE_OPEN         2 
@@ -37,6 +39,8 @@ struct pollfd fds[IDX];
 char *time_str;
 char content_str[CONTENT_SZ];
 char *pressure_file[IDX];
+long time_sz = TIME_SZ;
+int trigger_sz = TRIGGER_SZ;
 int trigger_threshold_ms[IDX];
 int tracking_window_s[IDX];
 
@@ -46,7 +50,7 @@ void set_time_str() {
 
     time(&now); // get the current time
     tm_info = localtime(&now);
-    strftime(time_str, 26, "%Y-%m-%d %H:%M:%S ", tm_info);
+    strftime(time_str, time_sz, "%Y-%m-%d %H:%M:%S ", tm_info);
 }
 
 void set_content_str(int psi_idx) {
@@ -57,11 +61,10 @@ void set_content_str(int psi_idx) {
     fd = open (pressure_file[psi_idx], O_NONBLOCK | O_RDONLY );
     bytes_read = read(fd, content_str, CONTENT_SZ);
     close(fd);
-
 }
 
-void setup_polling() {
-    char trigger[256];
+void poll_pressure_events() {
+    char trigger[trigger_sz];
     
     for (int i = 0; i < IDX; i++) {
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
@@ -70,7 +73,7 @@ void setup_polling() {
             exit(ERROR_PRESSURE_OPEN);
         }
         fds[i].events = POLLPRI;
-        snprintf(trigger, 256, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
+        snprintf(trigger, trigger_sz, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
         printf("\n%s trigger:\n%s\n", pressure_file[i], trigger);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
@@ -81,7 +84,7 @@ void setup_polling() {
     }
 }
 
-void wait_for_notification() {
+void wait_pressure_events() {
     int event_counter[IDX];
 
     for (int i = 0; i < IDX; i++)  {
@@ -98,7 +101,6 @@ void wait_for_notification() {
 
         for (int i = 0; i < IDX; i++) {
             if (fds[i].revents == 0) {
-                printf("%d no event ", i);
                 continue;
             }
             if (fds[i].revents & POLLERR) {
@@ -126,11 +128,11 @@ void verify_proc_pressure() {
         exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
         set_time_str();
-        puts(time_str);
+        printf("Polling events starting at %s", time_str);
     }
 }
 
-void populate() {
+void populate_arrays() {
     pressure_file[0] = "/proc/pressure/cpu";
     pressure_file[1] = "/proc/pressure/io";
     pressure_file[2] = "/proc/pressure/memory";
@@ -143,9 +145,8 @@ void populate() {
 }
 
 int main() {
-    populate();
+    populate_arrays();
     verify_proc_pressure();
-    setup_polling();
-    wait_for_notification();
-    return 0;
+    poll_pressure_events();
+    wait_pressure_events();
 }

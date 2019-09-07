@@ -35,9 +35,9 @@ void set_time_str() {
     time_t now;
     struct tm* tm_info;
 
-	time(&now); // get the current time
-	tm_info = localtime(&now);
-	strftime(time_str, 26, "%Y-%m-%d %H:%M:%S ", tm_info);
+    time(&now); // get the current time
+    tm_info = localtime(&now);
+    strftime(time_str, 26, "%Y-%m-%d %H:%M:%S ", tm_info);
 }
 
 void set_content_str(int psi_idx)
@@ -45,31 +45,31 @@ void set_content_str(int psi_idx)
     int bytes_read;
     int fd;
 
-	memset(&(content_str[0]), 0, CONTENT_SZ);
-	fd = open (pressure_file[psi_idx], O_NONBLOCK | O_RDONLY );
+    memset(&(content_str[0]), 0, CONTENT_SZ);
+    fd = open (pressure_file[psi_idx], O_NONBLOCK | O_RDONLY );
     bytes_read = read(fd, content_str, CONTENT_SZ);
-	close(fd);
+    close(fd);
 
 }
 
 void setup_polling() {
-    /* Let's first setup our PSI triggers */
-	char trigger[256];
+    /* Setup PSI triggers */
+    char trigger[256];
     for (int i = 0; i < 3; i++) {
-    	fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
-		if (fds[i].fd < 0) {
-			printf("Error open() pressure file %s:", pressure_file[i]);
-			exit(2);
-		}
-		fds[i].events = POLLPRI;
-		snprintf(trigger, 256, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
-		printf("\n%s trigger:\n%s\n", pressure_file[i], trigger);
-		set_content_str(i);
-		printf("%s content:\n%s\n", pressure_file[i], content_str);
-		if (write(fds[i].fd, trigger, strlen(trigger) + 1) < 0) {
-			printf("Error write() pressure file %s:", pressure_file[i]);
-			exit(3);
-		}
+        fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
+        if (fds[i].fd < 0) {
+        printf("Error open() pressure file %s:", pressure_file[i]);
+        exit(2);
+        }
+        fds[i].events = POLLPRI;
+        snprintf(trigger, 256, "some %d %d", trigger_threshold_ms[i] * 1000, tracking_window_s[i] * 1000000);
+        printf("\n%s trigger:\n%s\n", pressure_file[i], trigger);
+        set_content_str(i);
+        printf("%s content:\n%s\n", pressure_file[i], content_str);
+        if (write(fds[i].fd, trigger, strlen(trigger) + 1) < 0) {
+            printf("Error write() pressure file %s:", pressure_file[i]);
+            exit(3);
+        }
     }
 }
 
@@ -82,26 +82,23 @@ void wait_for_notification() {
 
     while (1) {
        //
-    	int n;
-    	n = poll(fds, 3, -1);
+        int n;
+        n = poll(fds, 3, -1);
 
         for (int i = 0; i < 3; i++) {
-
             if (fds[i].revents == 0) {
-            	printf("%d no event ", i);
+                printf("%d no event ", i);
                 continue;
             }
-
             if (fds[i].revents & POLLERR) {
                 fprintf(stderr, "Error: poll() event source is gone.\n");
                 exit(1);
             }
             if (fds[i].events) {
-            	set_time_str();
-        		set_content_str(i);
-        		printf("%s content:\n%s\n", pressure_file[i], content_str);
-            }
-            else {
+                set_time_str();
+                set_content_str(i);
+                printf("%s content:\n%s\n", pressure_file[i], content_str);
+            } else {
                 fprintf(stderr, "Unrecognized event: 0x%x.\n", fds[i].revents);
                 exit(2);
             }
@@ -117,8 +114,8 @@ void check_basics() {
         fprintf(stderr, "You may want to check if you have Linux Kernel v5.2+ with PSI enabled.\n");
         exit(1);
     } else {
-    	set_time_str();
-    	puts(time_str);
+        set_time_str();
+        puts(time_str);
     }
 }
 

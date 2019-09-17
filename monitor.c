@@ -148,7 +148,7 @@ void pressure_event_loop() {
         event_counter[i] = 1;
     }
 
-    printf("\nWaiting for events...\n");
+    printf("\nPolling for events...\n");
     while (continue_event_loop == 1) {
         int n = poll(fds, SZ_IDX, -1);
         if (continue_event_loop == 0) break;

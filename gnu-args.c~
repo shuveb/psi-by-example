@@ -55,7 +55,7 @@ static struct argp_option options[] = {
   {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
   {"verbose",  'v', 0,       0, "Produce verbose output" },
   {"quiet",    'q', 0,       0, "Don't produce any output" },
-  {"some", 's', 0, 0, "Set CPU threshold for some pressure" },
+  {"some", 's', 0, 0, "Set CPU threshold for somel pressure" },
   {"trigger", 't', "TRIGGER", 0, "Set Global threshold to (500-10000ms) to TRIGGER" },
   {"threshold",   'T', 0,       OPTION_ALIAS },
   {"window", 'w', "WIN", 0, "Set Global window (500-10000ms) to WIN" },
@@ -71,8 +71,6 @@ struct arguments
   char *arg1;                   /* arg1 */
   char **strings;               /* [string…] */
   int silent, verbose, abort;   /* ‘-s’, ‘-v’, ‘--abort’ */
-  int full;                     /* ‘-f’ */
-  int some;                     /* ‘-s’ */
   char *output_file;            /* file arg to ‘--output’ */
   char *cpu_window;             /* file arg to ‘--cpu-window’ */
   char *cpu_trigger;            /* file arg to ‘--cpu-thresh’ */
@@ -92,17 +90,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
   switch (key)
     {
-    case 'q':
+    case 'q': case 's':
       arguments->silent = 1;
       break;
     case 'v':
       arguments->verbose = 1;
-      break;
-    case 'f':
-      arguments->full = 1;
-      break;
-    case 's':
-      arguments->some = 1;
       break;
     case 'c':
       arguments->cpu_window = arg;

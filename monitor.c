@@ -12,13 +12,13 @@
 /* kernel accepts window sizes ranging from 500ms to 10s */
 #define CPU_TRACKING_WINDOW_MS      500     // 0.5 seconds
 #define IO_TRACKING_WINDOW_MS       1000    // 1 second
-#define MEMORY_TRACKING_WINDOW_MS   10000   // 10 seconds 
+#define MEMORY_TRACKING_WINDOW_MS   750     // 0.75 seconds 
 #define MS_TO_US                    1000    // millisecs to microseconds factor
 
 /* min monitoring update interval is 50ms and max is 1s */
 #define CPU_TRIGGER_THRESHOLD_MS    50      // 50 ms
-#define IO_TRIGGER_THRESHOLD_MS     100     // 0.1 second
-#define MEMORY_TRIGGER_THRESHOLD_MS 1000    // 1 second
+#define IO_TRIGGER_THRESHOLD_MS     100     // 0.1 seconds
+#define MEMORY_TRIGGER_THRESHOLD_MS 75      // 75 ms
 
 /* paths to the pressure stall information files writable by kernel 5.2+ */
 #define CPU_PRESSURE_FILE           "/proc/pressure/cpu"
@@ -38,7 +38,7 @@
 #define SZ_IDX                      3
 #define SZ_CONTENT                  128
 #define SZ_EVENT                    256
-#define SZ_TIME                     26
+#define SZ_TIME                     21
 #define SZ_EPOCH                    11
 
 /* errors defined to differentiate program exit values */
@@ -60,8 +60,7 @@ struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
 char time_str[SZ_TIME];
-char epoch_str[SZ_EPOCH];
-int trigger_threshold_ms[SZ_IDX];
+int delay_threshold_ms[SZ_IDX];
 int tracking_window_ms[SZ_IDX];
 int continue_event_loop = 1;
 
@@ -75,29 +74,30 @@ void close_fds(){
     }
     fprintf(stderr, "\nAll file descriptors now closed, exiting now!\n");
 }
-/* signal handler for SIGINT */
-void sigint_handler(int sig_num) 
-{ 
+
+/* signal handler for SIGINT and SIGTERM */
+void sig_handler(int sig_num) { 
     /* Reset handler to catch SIGINT next time. 
        Refer http://en.cppreference.com/w/c/program/signal */
     printf("\nTerminating in response to Ctrl+C \n"); 
-    signal(SIGINT, sigint_handler); 
+    signal(SIGINT, sig_handler); 
+    signal(SIGTERM, sig_handler); 
     continue_event_loop = 0; 
     close_fds(); 
     fflush(stdout); 
 }
+
+/* set the global time_str char array to the ISO formatted time */
 void set_time_str(int fmt) {
     time_t now;
     struct tm* tm_info;
 
     time(&now);
     tm_info = localtime(&now);
-    if (fmt == FMT_EPOCH)
-        strftime(time_str, SZ_EPOCH, "%s", tm_info);
-    else
-        strftime(time_str, SZ_TIME, "%T", tm_info);
+    strftime(time_str, SZ_TIME, "%Y-%m-%d %H:%M:%S", tm_info);
 }
 
+/* set the global content_str char array to the contents of a PSI file */
 void set_content_str(int psi_idx) {
     int fd;
 
@@ -107,6 +107,10 @@ void set_content_str(int psi_idx) {
     close(fd);
 }
 
+/* set the event delay for `some delay_threshold_ms tracking_window_ms`
+ * so tasks delayed greater than the threshold time within a tracking window
+ * will cause an event indicating that condition of distress
+*/
 void poll_pressure_events() {
     char distress_event[SZ_EVENT];
 
@@ -120,19 +124,23 @@ void poll_pressure_events() {
         }
         fds[i].events = POLLPRI;
         snprintf(distress_event, SZ_EVENT, "some %d %d",
-                trigger_threshold_ms[i] * MS_TO_US,
+                delay_threshold_ms[i] * MS_TO_US,
                 tracking_window_ms[i] * MS_TO_US);
         printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
         if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
-            fprintf(stderr, "Error write() pressure file %s:",
+            fprintf(stderr, "Error write() pressure file: %s\n",
                     pressure_file[i]);
             exit(ERROR_PRESSURE_WRITE);
         }
     }
 }
 
+/* loop until program is terminated or interrupted
+ * increment event_counter for cpu, io, and memory
+ * continue polling for events until continue_event_loop
+ * changes value */
 void pressure_event_loop() {
     int event_counter[SZ_IDX];
 
@@ -141,7 +149,7 @@ void pressure_event_loop() {
     }
 
     printf("\nWaiting for events...\n");
-    while (continue_event_loop) {
+    while (continue_event_loop == 1) {
         int n = poll(fds, SZ_IDX, -1);
         if (continue_event_loop == 0) break;
         if (n < 0) {
@@ -158,9 +166,9 @@ void pressure_event_loop() {
                 exit(ERROR_PRESSURE_FILE_GONE);
             }
             if (fds[i].events) {
-                set_time_str(FMT_EPOCH);
+                set_time_str(FMT_YMD_HMS);
                 set_content_str(i);
-                printf("%i %s %s %s\n", pressure_file[i], event_counter[i]++, epoch_str, content_str);
+                printf("%s %i %s %s\n", pressure_file[i], event_counter[i]++, time_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
@@ -187,9 +195,9 @@ void populate_arrays() {
     pressure_file[0] = "/proc/pressure/cpu";
     pressure_file[1] = "/proc/pressure/io";
     pressure_file[2] = "/proc/pressure/memory";
-    trigger_threshold_ms[0] = CPU_TRIGGER_THRESHOLD_MS;
-    trigger_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
-    trigger_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
+    delay_threshold_ms[0] = CPU_TRIGGER_THRESHOLD_MS;
+    delay_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
+    delay_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
     tracking_window_ms[0] = CPU_TRACKING_WINDOW_MS;
     tracking_window_ms[1] = IO_TRACKING_WINDOW_MS;
     tracking_window_ms[2] = MEMORY_TRACKING_WINDOW_MS;
@@ -200,6 +208,7 @@ int main(int argc, char **argv) {
     populate_arrays();
     verify_proc_pressure();
     poll_pressure_events();
-    signal(SIGINT, sigint_handler);
+    signal(SIGTERM, sig_handler); 
+    signal(SIGINT, sig_handler);
     pressure_event_loop();
 }

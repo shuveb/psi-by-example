@@ -1,12 +1,13 @@
-#include <stdio.h>
-#include <poll.h>
+#include <argp.h>
 #include <fcntl.h>
+#include <poll.h>
 #include <signal.h> 
-#include <sys/stat.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <time.h>
+#include <unistd.h>
 
 /* kernel accepts window sizes ranging from 500ms to 10s */
 #define CPU_TRACKING_WINDOW_MS      500     // 0.5 seconds
@@ -49,6 +50,12 @@
 #define ERROR_PRESSURE_EVENT_UNK    6   
 
 /* global variables for polling file descriptor, char and int arrays */
+const char *argp_program_version =  "psi 1.0";
+const char *argp_program_bug_address =  "<keith.wright@linuxacademy.comg>";
+/* Program documentation. */
+static char doc[] =  "psi - Pressure Stall Information(PSI) performance tool";
+static struct argp argp = { 0, 0, 0, doc };
+
 struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
@@ -188,7 +195,8 @@ void populate_arrays() {
     tracking_window_ms[2] = MEMORY_TRACKING_WINDOW_MS;
 }
 
-int main() {
+int main(int argc, char **argv) {
+    argp_parse (&argp, argc, argv, 0, 0, 0);
     populate_arrays();
     verify_proc_pressure();
     poll_pressure_events();

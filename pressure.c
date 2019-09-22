@@ -56,6 +56,8 @@
 #define ERROR_IO_WIN_VALUE          10
 #define ERROR_MEM_TRIG_VALUE        11
 #define ERROR_MEM_WIN_VALUE         12
+#define ERROR_ALL_TRIG_VALUE        13
+#define ERROR_ALL_WIN_VALUE         14
 
 
 /* This program uses the same features as example 3, but has more
@@ -100,22 +102,25 @@ static char args_doc[] = "[OPTION...]";
 /* Keys for options without short-options. */
 #define OPT_ABORT  1            /* –abort */
 
-/* The options we understand. */
+/* The options we understand.
+ *
+ *
+ * {"full", 'f', 0, 0, "Set CPU threshold for full pressure" },
+ * {"some", 's', 0, 0, "Set CPU threshold for some pressure" },
+*/
 static struct argp_option options[] = {
   {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
   {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
-  {"full", 'f', 0, 0, "Set CPU threshold for full pressure" },
   {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) to IO_WIN" },
   {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) to IO_TRIG" },
   {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
   {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
   {"verbose",  'v', 0,       0, "Produce verbose output" },
   {"quiet",    'q', 0,       0, "Don't produce any output" },
-  {"some", 's', 0, 0, "Set CPU threshold for some pressure" },
-  {"trigger", 't', "TRIGGER", 0, "Set Global threshold to (500-10000ms) to TRIGGER" },
-  {"threshold",   'T', 0,       OPTION_ALIAS },
-  {"window", 'w', "WIN", 0, "Set Global window (500-10000ms) to WIN" },
-  {"tracking",   'W', 0,       OPTION_ALIAS },
+  {"all-trig", 't', "TRIGGER", 0, "Set Global threshold to (500-10000ms) to TRIGGER" },
+  {"trigger",   'T', 0,       OPTION_ALIAS },
+  {"all-win", 'w', "WIN", 0, "Set Global window (500-10000ms) to WIN" },
+  {"window",   'W', 0,       OPTION_ALIAS },
   {"output",   'o', "FILE",  0,
    "Output to FILE instead of standard output" },
   { 0 }
@@ -131,11 +136,13 @@ struct arguments
   int some;                     /* ‘-s’ */
   char *output_file;            /* file arg to ‘--output’ */
   char *cpu_window;             /* file arg to ‘--cpu-window’ */
-  char *cpu_trigger;            /* file arg to ‘--cpu-thresh’ */
+  char *cpu_trigger;            /* file arg to ‘--cpu-trig’ */
   char *io_window;              /* file arg to ‘--io-window’ */
-  char *io_trigger;             /* file arg to ‘--io-thresh’ */
+  char *io_trigger;             /* file arg to ‘--io-trig’ */
   char *mem_window;          /* file arg to ‘--memory-window’ */
-  char *mem_trigger;         /* file arg to ‘--memory-thresh’ */
+  char *mem_trigger;         /* file arg to ‘--memory-trig’ */
+  char *all_window;          /* file arg to ‘--all-window’ */
+  char *all_trigger;         /* file arg to ‘--all-trig’ */
 };
 struct arguments arguments;
 // static struct argp argp = { 0, 0, 0, doc };
@@ -330,6 +337,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case 'o':
       arguments->output_file = arg;
       break;
+    case 't':
+      arguments->all_window = arg;
+      break;
+    case 'T':
+      arguments->all_trigger = arg;
+      break;
 
     case ARGP_KEY_NO_ARGS:
       // argp_usage (state);
@@ -450,6 +463,55 @@ void populate_arrays(struct arguments *arguments) {
             printf("The  -m or --mem-win option required to be integer between 500 to 10000000 (ms)\n", arguments->mem_window);
             printf("%s is not an integer in this range. Exiting.\n", arguments->mem_window);
             exit(ERROR_MEM_WIN_VALUE);
+        }
+    }
+
+// global trigger and threshold
+    if (arguments->all_trigger != NULL) {
+        if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL
+            || arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
+         
+            printf("The -T or --all-trig option cannot be used with cpu, io, or memory options.\n", arguments->all_trigger);
+            printf("Only -t or --all-window option can be used with -T or --all-trig  Exiting.\n", arguments->all_trigger);
+
+            exit(ERROR_ALL_TRIG_VALUE);
+        }
+        int all_t = atoi (arguments->all_trigger);
+        if (all_t >= 50 && all_t <= 1000) { // 50ms to 1s
+            delay_threshold_ms[0] = all_t; 
+            delay_threshold_ms[1] = all_t; 
+            delay_threshold_ms[2] = all_t; 
+        } else {
+            printf("The -T or --all-trig option is required integer between 50 to 1000 (ms)\n", arguments->all_trigger);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->all_trigger);
+
+            exit(ERROR_ALL_TRIG_VALUE);
+        }
+    }
+
+        if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL
+            || arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
+         
+            printf("The -T or --all-trig option cannot be used with cpu, io, or memory trigger options.\n", arguments->all_trigger);
+            exit(ERROR_ALL_TRIG_VALUE);
+        }
+    if (arguments->all_window != NULL) {
+
+        if (arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
+         
+            printf("The -t or --all-window option cannot be used with cpu, io, or memory window options.\n", arguments->all_trigger);
+
+            exit(ERROR_ALL_TRIG_VALUE);
+            }
+        int all_w = atoi (arguments->all_window);
+        if (all_w >= 500 && all_w <= 10000000) { // 500ms to 10s
+            tracking_window_ms[0] = all_w;
+            tracking_window_ms[1] = all_w;
+            tracking_window_ms[2] = all_w;
+        } else {
+            printf("The  -t or --all-win option required to be integer between 500 to 10000000 (ms)\n", arguments->all_window);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->all_window);
+            exit(ERROR_ALL_WIN_VALUE);
         }
     }
 }

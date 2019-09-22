@@ -134,8 +134,8 @@ struct arguments
   char *cpu_trigger;            /* file arg to ‘--cpu-thresh’ */
   char *io_window;              /* file arg to ‘--io-window’ */
   char *io_trigger;             /* file arg to ‘--io-thresh’ */
-  char *memory_window;          /* file arg to ‘--memory-window’ */
-  char *memory_trigger;         /* file arg to ‘--memory-thresh’ */
+  char *mem_window;          /* file arg to ‘--memory-window’ */
+  char *mem_trigger;         /* file arg to ‘--memory-thresh’ */
 };
 struct arguments arguments;
 // static struct argp argp = { 0, 0, 0, doc };
@@ -322,10 +322,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->io_trigger = arg;
       break;
     case 'm':
-      arguments->memory_window = arg;
+      arguments->mem_window = arg;
       break;
     case 'M':
-      arguments->memory_trigger = arg;
+      arguments->mem_trigger = arg;
       break;
     case 'o':
       arguments->output_file = arg;

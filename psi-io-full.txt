@@ -1,0 +1,10 @@
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299849636
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299850416
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299851665
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299854436
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299855018
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299856643
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299860304
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299860751
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299862815
+full avg10 0.00 avg60 0.00 avg300 0.00 total 299863392

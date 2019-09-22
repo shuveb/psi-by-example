@@ -12,15 +12,15 @@
 #include <unistd.h>
 
 /* kernel accepts window sizes ranging from 500ms to 10s */
-#define CPU_TRACKING_WINDOW_MS      500     // 0.5 seconds
-#define IO_TRACKING_WINDOW_MS       1000    // 1 second
-#define MEMORY_TRACKING_WINDOW_MS   750     // 0.75 seconds 
+#define CPU_WIN                     500     // 0.5 seconds
+#define IO_WIN                      500    // 1 second
+#define MEM_WIN                     500     // 0.75 seconds 
 #define MS_TO_US                    1000    // millisecs to microseconds factor
 
 /* min monitoring update interval is 50ms and max is 1s */
-#define CPU_TRIGGER_THRESHOLD_MS    50      // 50 ms
-#define IO_TRIGGER_THRESHOLD_MS     100     // 0.1 seconds
-#define MEMORY_TRIGGER_THRESHOLD_MS 75      // 75 ms
+#define CPU_TRIG                    50      // 50 ms
+#define IO_TRIG                     50     // 0.1 seconds
+#define MEM_TRIG                    50      // 75 ms
 
 /* paths to the pressure stall information files writable by kernel 5.2+ */
 #define CPU_PRESSURE_FILE           "/proc/pressure/cpu"
@@ -81,15 +81,14 @@ const char *argp_program_bug_address =
 
 /* Program documentation. */
 static char doc[] =
-  "pressure 0.1 -- a program to allow you to set triggers for\
-Pressure Stall Information (PSI) to report when processes are\
-being stalled by unavailable CPU, I/O, or Memory resources.\
-options\
-\vThe pressure program is currently under development.\
+  "pressure 0.1 -- a program to allow you to set triggers for \
+Pressure Stall Information (PSI) to report when processes are \
+being stalled by unavailable CPU, I/O, or Memory resources. \
+\vThe pressure program is currently under development. \
 Use as-is without any warranties.\n";
 
 /* A description of the arguments we accept. */
-static char args_doc[] = "ARG1 [STRING...]";
+static char args_doc[] = "[OPTION...]";
 
 /* Keys for options without short-options. */
 #define OPT_ABORT  1            /* –abort */
@@ -131,7 +130,7 @@ struct arguments
   char *memory_window;          /* file arg to ‘--memory-window’ */
   char *memory_trigger;         /* file arg to ‘--memory-thresh’ */
 };
-
+struct arguments arguments;
 // static struct argp argp = { 0, 0, 0, doc };
 
 struct pollfd fds[SZ_IDX];
@@ -269,17 +268,6 @@ void verify_proc_pressure() {
     }
 }
 
-void populate_arrays() {
-    pressure_file[0] = "/proc/pressure/cpu";
-    pressure_file[1] = "/proc/pressure/io";
-    pressure_file[2] = "/proc/pressure/memory";
-    delay_threshold_ms[0] = arguments.cpu_trigger ; //CPU_TRIGGER_THRESHOLD_MS;
-    delay_threshold_ms[1] = IO_TRIGGER_THRESHOLD_MS;
-    delay_threshold_ms[2] = MEMORY_TRIGGER_THRESHOLD_MS;
-    tracking_window_ms[0] = CPU_TRACKING_WINDOW_MS;
-    tracking_window_ms[1] = IO_TRACKING_WINDOW_MS;
-    tracking_window_ms[2] = MEMORY_TRACKING_WINDOW_MS;
-}
 /*
 int main(int argc, char **argv) {
     argp_parse (&argp, argc, argv, 0, 0, 0);
@@ -337,7 +325,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARGP_KEY_NO_ARGS:
-      argp_usage (state);
+      // argp_usage (state);
+      break;
 
     case ARGP_KEY_ARG:
       /* Here we know that state->arg_num == 0, since we
@@ -366,6 +355,25 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+void populate_arrays(struct arguments *arguments) {
+    // struct arguments *arguments = state->input;
+    pressure_file[0] = "/proc/pressure/cpu";
+    pressure_file[1] = "/proc/pressure/io";
+    pressure_file[2] = "/proc/pressure/memory";
+// The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
+    if (arguments->cpu_trigger != NULL) {
+        printf("%s cpu_trigger", arguments->cpu_trigger);
+        int cpu_t = atoi (arguments->cpu_trigger);
+        delay_threshold_ms[0] = (cpu_t >= 50 && cpu_t <= 1000) ? cpu_t : CPU_TRIG; 
+    } else {
+        delay_threshold_ms[0] = CPU_TRIG;
+    }
+    delay_threshold_ms[1] = IO_TRIG;
+    delay_threshold_ms[2] = MEM_TRIG;
+    tracking_window_ms[0] = CPU_WIN;
+    tracking_window_ms[1] = IO_WIN;
+    tracking_window_ms[2] = MEM_WIN;
+}
 /* Our argp parser. */
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
@@ -373,7 +381,6 @@ int
 main (int argc, char **argv)
 {
   int i, j;
-  struct arguments arguments;
 
   /* Default values. */
   arguments.silent = 0;
@@ -381,13 +388,14 @@ main (int argc, char **argv)
   arguments.output_file = "-";
   arguments.abort = 0;
   int repeat_count = 1;
+
+
   /* Parse our arguments; every option seen by parse_opt will be
      reflected in arguments. */
   argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
-  for (i = 0; i < repeat_count; i++)
+  /*for (i = 0; i < repeat_count; i++)
     {
-      printf ("ARG1 = %s\n", arguments.arg1);
       printf ("STRINGS = ");
       for (j = 0; arguments.strings[j]; j++)
         printf (j == 0 ? "%s" : ", %s", arguments.strings[j]);
@@ -397,8 +405,8 @@ main (int argc, char **argv)
               arguments.verbose ? "yes" : "no",
               arguments.silent ? "yes" : "no");
     }
-
-    populate_arrays();
+*/
+    populate_arrays(&arguments);
     verify_proc_pressure();
     poll_pressure_events();
     signal(SIGTERM, sig_handler); 

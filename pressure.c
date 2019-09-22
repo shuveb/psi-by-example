@@ -468,12 +468,8 @@ void populate_arrays(struct arguments *arguments) {
 
 // global trigger and threshold
     if (arguments->all_trigger != NULL) {
-        if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL
-            || arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
-         
+        if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL) {
             printf("The -T or --all-trig option cannot be used with cpu, io, or memory options.\n", arguments->all_trigger);
-            printf("Only -t or --all-window option can be used with -T or --all-trig  Exiting.\n", arguments->all_trigger);
-
             exit(ERROR_ALL_TRIG_VALUE);
         }
         int all_t = atoi (arguments->all_trigger);
@@ -483,26 +479,16 @@ void populate_arrays(struct arguments *arguments) {
             delay_threshold_ms[2] = all_t; 
         } else {
             printf("The -T or --all-trig option is required integer between 50 to 1000 (ms)\n", arguments->all_trigger);
-            printf("%s is not an integer in this range. Exiting.\n", arguments->all_trigger);
-
             exit(ERROR_ALL_TRIG_VALUE);
         }
     }
 
-        if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL
-            || arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
-         
-            printf("The -T or --all-trig option cannot be used with cpu, io, or memory trigger options.\n", arguments->all_trigger);
-            exit(ERROR_ALL_TRIG_VALUE);
-        }
     if (arguments->all_window != NULL) {
 
         if (arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
-         
             printf("The -t or --all-window option cannot be used with cpu, io, or memory window options.\n", arguments->all_trigger);
-
             exit(ERROR_ALL_TRIG_VALUE);
-            }
+        }
         int all_w = atoi (arguments->all_window);
         if (all_w >= 500 && all_w <= 10000000) { // 500ms to 10s
             tracking_window_ms[0] = all_w;

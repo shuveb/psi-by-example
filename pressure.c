@@ -50,6 +50,9 @@
 #define ERROR_PRESSURE_POLL_FDS     4
 #define ERROR_PRESSURE_FILE_GONE    5
 #define ERROR_PRESSURE_EVENT_UNK    6   
+#define ERROR_CPU_TRIG_VALUE        7
+#define ERROR_CPU_WIN_VALUE         8
+
 
 /* This program uses the same features as example 3, but has more
    options, and somewhat more structure in the -help output.  It
@@ -362,12 +365,18 @@ void populate_arrays(struct arguments *arguments) {
     pressure_file[2] = "/proc/pressure/memory";
 // The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
     if (arguments->cpu_trigger != NULL) {
-        printf("%s cpu_trigger", arguments->cpu_trigger);
         int cpu_t = atoi (arguments->cpu_trigger);
-        delay_threshold_ms[0] = (cpu_t >= 50 && cpu_t <= 1000) ? cpu_t : CPU_TRIG; 
-    } else {
-        delay_threshold_ms[0] = CPU_TRIG;
+        if (cpu_t >= 50 && cpu_t <= 1000) {
+            delay_threshold_ms[0] = CPU_TRIG; 
+        } else {
+            printf("%s -c or --cpu_trig option value must be between 50 to 1000 ms", arguments->cpu_trigger);
+            exit(ERROR_CPU_WIN_VALUE);
+        }
     }
+/*
+ *   {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
+  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
+*/
     delay_threshold_ms[1] = IO_TRIG;
     delay_threshold_ms[2] = MEM_TRIG;
     tracking_window_ms[0] = CPU_WIN;

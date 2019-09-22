@@ -52,6 +52,10 @@
 #define ERROR_PRESSURE_EVENT_UNK    6   
 #define ERROR_CPU_TRIG_VALUE        7
 #define ERROR_CPU_WIN_VALUE         8
+#define ERROR_IO_TRIG_VALUE         9
+#define ERROR_IO_WIN_VALUE          10
+#define ERROR_MEM_TRIG_VALUE        11
+#define ERROR_MEM_WIN_VALUE         128
 
 
 /* This program uses the same features as example 3, but has more
@@ -378,7 +382,7 @@ void populate_arrays(struct arguments *arguments) {
   {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
   {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
 *
-* /
+*/
     if (arguments->cpu_trigger != NULL) {
         int cpu_t = atoi (arguments->cpu_trigger);
         if (cpu_t >= 50 && cpu_t <= 1000) { // 50ms to 1s

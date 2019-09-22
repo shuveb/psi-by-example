@@ -148,6 +148,7 @@ struct arguments
 struct arguments arguments;
 // static struct argp argp = { 0, 0, 0, doc };
 FILE *outstream;
+int out_fd;
 struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
@@ -164,6 +165,7 @@ void close_fds(){
         usleep(tracking_window_ms[i] * MS_TO_US);
         close(fds[i].fd);
     }
+    // close(outstream->fd);
     fprintf(stderr, "\nAll file descriptors now closed, exiting now!\n");
 }
 
@@ -220,20 +222,24 @@ void poll_pressure_events(int full) {
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
             fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            if (arguments.silent == 0) fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         } else if (full == 1 && i == 0) { // don't print full for the cpu
             snprintf(distress_event, SZ_EVENT, "some %d %d",
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
             fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+	    if (arguments.silent == 0) fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         } else {
             snprintf(distress_event, SZ_EVENT, "some %d %d",
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
             fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            if (arguments.silent == 0) fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
 	}
         fds[i].events = POLLPRI;
         set_content_str(i);
         fprintf(outstream, "%s content:\n%s\n", pressure_file[i], content_str);
+        if (arguments.silent == 0) fprintf(stdout, "%s content:\n%s\n", pressure_file[i], content_str);
         if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
             fprintf(stderr, "Error write() pressure file: %s\n",
                 pressure_file[i]);
@@ -255,6 +261,7 @@ void pressure_event_loop() {
     }
 
     fprintf(outstream, "\nPolling for events...\n");
+    if (arguments.silent == 0) fprintf(stdout, "\nPolling for events...\n");
     while (continue_event_loop == 1) {
         int n = poll(fds, SZ_IDX, -1);
         if (continue_event_loop == 0) break;
@@ -275,6 +282,7 @@ void pressure_event_loop() {
                 set_time_str(FMT_YMD_HMS);
                 set_content_str(i);
                 fprintf(outstream, "%s %i %s %s\n", pressure_file[i], event_counter[i]++, time_str, content_str);
+                if (arguments.silent == 0) fprintf(stdout, "%s %i %s %s\n", pressure_file[i], event_counter[i]++, time_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
@@ -294,6 +302,7 @@ void verify_proc_pressure() {
     } else {
         set_time_str(FMT_YMD_HMS);
         fprintf(outstream, "Polling events starting at %s", time_str);
+        if (arguments.silent == 0) fprintf(stdout, "Polling events starting at %s", time_str);
     }
 }
 
@@ -395,7 +404,7 @@ void populate_arrays(struct arguments *arguments) {
     if (arguments->output_file != NULL) {
 	outstream = fopen(arguments->output_file, "w");
     } else { 
-            outstream = stdout;
+        outstream = stdout;
     }
     
     if (arguments->cpu_trigger != NULL) {

@@ -363,25 +363,69 @@ void populate_arrays(struct arguments *arguments) {
     pressure_file[0] = "/proc/pressure/cpu";
     pressure_file[1] = "/proc/pressure/io";
     pressure_file[2] = "/proc/pressure/memory";
-// The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
-    if (arguments->cpu_trigger != NULL) {
-        int cpu_t = atoi (arguments->cpu_trigger);
-        if (cpu_t >= 50 && cpu_t <= 1000) {
-            delay_threshold_ms[0] = CPU_TRIG; 
-        } else {
-            printf("%s -c or --cpu_trig option value must be between 50 to 1000 ms", arguments->cpu_trigger);
-            exit(ERROR_CPU_WIN_VALUE);
-        }
-    }
-/*
- *   {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
-  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
-*/
+    delay_threshold_ms[0] = CPU_TRIG; 
     delay_threshold_ms[1] = IO_TRIG;
     delay_threshold_ms[2] = MEM_TRIG;
     tracking_window_ms[0] = CPU_WIN;
     tracking_window_ms[1] = IO_WIN;
     tracking_window_ms[2] = MEM_WIN;
+/* The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
+*
+*   {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
+*  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
+*     {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) to IO_WIN" },
+  {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) to IO_TRIG" },
+  {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
+  {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
+*
+* /
+    if (arguments->cpu_trigger != NULL) {
+        int cpu_t = atoi (arguments->cpu_trigger);
+        if (cpu_t >= 50 && cpu_t <= 1000) { // 50ms to 1s
+            delay_threshold_ms[0] = cpu_t; 
+        } else {
+            printf("The -C or --cpu-trig option is required integer between 50 to 1000 (ms)\n", arguments->cpu_trigger);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->cpu_trigger);
+
+            exit(ERROR_CPU_TRIG_VALUE);
+        }
+    }
+
+    if (arguments->cpu_window != NULL) {
+        int cpu_w = atoi (arguments->cpu_window);
+        if (cpu_w >= 500 && cpu_w <= 10000000) { // 500ms to 10s
+            tracking_window_ms[0] = cpu_w;
+        } else {
+            printf("The  -c or --cpu-win option required to be integer between 500 to 10000000 (ms)\n", arguments->cpu_window);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->cpu_window);
+            exit(ERROR_CPU_WIN_VALUE);
+        }
+    }
+
+
+    if (arguments->io_trigger != NULL) {
+        int io_t = atoi (arguments->io_trigger);
+        if (io_t >= 50 && io_t <= 1000) { // 50ms to 1s
+            delay_threshold_ms[1] = io_t; 
+        } else {
+            printf("The -I or --io-trig option is required integer between 50 to 1000 (ms)\n", arguments->io_trigger);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->io_trigger);
+
+            exit(ERROR_IO_TRIG_VALUE);
+        }
+    }
+
+    if (arguments->io_window != NULL) {
+        int io_w = atoi (arguments->io_window);
+        if (io_w >= 500 && io_w <= 10000000) { // 500ms to 10s
+            tracking_window_ms[1] = io_w;
+        } else {
+            printf("The  -i or --io-win option required to be integer between 500 to 10000000 (ms)\n", arguments->io_window);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->io_window);
+            exit(ERROR_IO_WIN_VALUE);
+        }
+    }
+
 }
 /* Our argp parser. */
 static struct argp argp = { options, parse_opt, args_doc, doc };

@@ -147,7 +147,7 @@ struct arguments
 };
 struct arguments arguments;
 // static struct argp argp = { 0, 0, 0, doc };
-
+FILE *outstream;
 struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
@@ -219,16 +219,21 @@ void poll_pressure_events(int full) {
             snprintf(distress_event, SZ_EVENT, "full %d %d",
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
-            printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         } else if (full == 1 && i == 0) { // don't print full for the cpu
             snprintf(distress_event, SZ_EVENT, "some %d %d",
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
-            printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-        }
+            fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+        } else {
+            snprintf(distress_event, SZ_EVENT, "some %d %d",
+                    delay_threshold_ms[i] * MS_TO_US,
+                    tracking_window_ms[i] * MS_TO_US);
+            fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+	}
         fds[i].events = POLLPRI;
         set_content_str(i);
-        printf("%s content:\n%s\n", pressure_file[i], content_str);
+        fprintf(outstream, "%s content:\n%s\n", pressure_file[i], content_str);
         if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
             fprintf(stderr, "Error write() pressure file: %s\n",
                 pressure_file[i]);
@@ -249,7 +254,7 @@ void pressure_event_loop() {
         event_counter[i] = 1;
     }
 
-    printf("\nPolling for events...\n");
+    fprintf(outstream, "\nPolling for events...\n");
     while (continue_event_loop == 1) {
         int n = poll(fds, SZ_IDX, -1);
         if (continue_event_loop == 0) break;
@@ -269,7 +274,7 @@ void pressure_event_loop() {
             if (fds[i].events) {
                 set_time_str(FMT_YMD_HMS);
                 set_content_str(i);
-                printf("%s %i %s %s\n", pressure_file[i], event_counter[i]++, time_str, content_str);
+                fprintf(outstream, "%s %i %s %s\n", pressure_file[i], event_counter[i]++, time_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
@@ -288,21 +293,9 @@ void verify_proc_pressure() {
         exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
         set_time_str(FMT_YMD_HMS);
-        printf("Polling events starting at %s", time_str);
+        fprintf(outstream, "Polling events starting at %s", time_str);
     }
 }
-
-/*
-int main(int argc, char **argv) {
-    argp_parse (&argp, argc, argv, 0, 0, 0);
-    populate_arrays();
-    verify_proc_pressure();
-    poll_pressure_events();
-    signal(SIGTERM, sig_handler); 
-    signal(SIGINT, sig_handler);
-    pressure_event_loop();
-}
-*/
 
 /* Parse a single option. */
 static error_t
@@ -398,14 +391,13 @@ void populate_arrays(struct arguments *arguments) {
     tracking_window_ms[2] = MEM_WIN;
 /* The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
 *
-*   {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
-*  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
-*     {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) to IO_WIN" },
-  {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) to IO_TRIG" },
-  {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
-  {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
-*
 */
+    if (arguments->output_file != NULL) {
+	outstream = fopen(arguments->output_file, "w");
+    } else { 
+            outstream = stdout;
+    }
+    
     if (arguments->cpu_trigger != NULL) {
         int cpu_t = atoi (arguments->cpu_trigger);
         if (cpu_t >= 50 && cpu_t <= 1000) { // 50ms to 1s

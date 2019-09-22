@@ -113,14 +113,15 @@ static struct argp_option options[] = {
   {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
   {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) to IO_WIN" },
   {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) to IO_TRIG" },
+  {"full", 'f', 0, 0, "Set CPU threshold for full pressure" },
   {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
   {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
   {"verbose",  'v', 0,       0, "Produce verbose output" },
   {"quiet",    'q', 0,       0, "Don't produce any output" },
   {"all-trig", 't', "TRIGGER", 0, "Set Global threshold to (500-10000ms) to TRIGGER" },
-  {"trigger",   'T', 0,       OPTION_ALIAS },
+  {"all-trigger",   'T', 0,       OPTION_ALIAS },
   {"all-win", 'w', "WIN", 0, "Set Global window (500-10000ms) to WIN" },
-  {"window",   'W', 0,       OPTION_ALIAS },
+  {"all-window",   'W', 0,       OPTION_ALIAS },
   {"output",   'o', "FILE",  0,
    "Output to FILE instead of standard output" },
   { 0 }
@@ -202,7 +203,7 @@ void set_content_str(int psi_idx) {
  * so tasks delayed greater than the threshold time within a tracking window
  * will cause an event indicating that condition of distress
 */
-void poll_pressure_events() {
+void poll_pressure_events(int full) {
     char distress_event[SZ_EVENT];
 
     for (int i = 0; i < SZ_IDX; i++) {
@@ -213,18 +214,27 @@ void poll_pressure_events() {
             fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
             exit(ERROR_PRESSURE_OPEN);
         }
+        
+        if (full == 1 && i != 0) {
+            snprintf(distress_event, SZ_EVENT, "full %d %d",
+                    delay_threshold_ms[i] * MS_TO_US,
+                    tracking_window_ms[i] * MS_TO_US);
+            printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+        } else if (full == 1 && i == 0) { // don't print full for the cpu
+            snprintf(distress_event, SZ_EVENT, "some %d %d",
+                    delay_threshold_ms[i] * MS_TO_US,
+                    tracking_window_ms[i] * MS_TO_US);
+            printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+        }
         fds[i].events = POLLPRI;
-        snprintf(distress_event, SZ_EVENT, "some %d %d",
-                delay_threshold_ms[i] * MS_TO_US,
-                tracking_window_ms[i] * MS_TO_US);
-        printf("\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
         set_content_str(i);
         printf("%s content:\n%s\n", pressure_file[i], content_str);
         if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
             fprintf(stderr, "Error write() pressure file: %s\n",
-                    pressure_file[i]);
+                pressure_file[i]);
             exit(ERROR_PRESSURE_WRITE);
         }
+           
     }
 }
 
@@ -400,6 +410,7 @@ void populate_arrays(struct arguments *arguments) {
         int cpu_t = atoi (arguments->cpu_trigger);
         if (cpu_t >= 50 && cpu_t <= 1000) { // 50ms to 1s
             delay_threshold_ms[0] = cpu_t; 
+            if (tracking_window_ms[0] < cpu_t) tracking_window_ms[0] = cpu_t; 
         } else {
             printf("The -C or --cpu-trig option is required integer between 50 to 1000 (ms)\n", arguments->cpu_trigger);
             printf("%s is not an integer in this range. Exiting.\n", arguments->cpu_trigger);
@@ -411,7 +422,7 @@ void populate_arrays(struct arguments *arguments) {
     if (arguments->cpu_window != NULL) {
         int cpu_w = atoi (arguments->cpu_window);
         if (cpu_w >= 500 && cpu_w <= 10000000) { // 500ms to 10s
-            tracking_window_ms[0] = cpu_w;
+            if (tracking_window_ms[0] < delay_threshold_ms[0]) tracking_window_ms[0] = delay_threshold_ms[0];
         } else {
             printf("The  -c or --cpu-win option required to be integer between 500 to 10000000 (ms)\n", arguments->cpu_window);
             printf("%s is not an integer in this range. Exiting.\n", arguments->cpu_window);
@@ -424,6 +435,7 @@ void populate_arrays(struct arguments *arguments) {
         int io_t = atoi (arguments->io_trigger);
         if (io_t >= 50 && io_t <= 1000) { // 50ms to 1s
             delay_threshold_ms[1] = io_t; 
+            if (tracking_window_ms[1] < io_t) tracking_window_ms[1] = io_t; 
         } else {
             printf("The -I or --io-trig option is required integer between 50 to 1000 (ms)\n", arguments->io_trigger);
             printf("%s is not an integer in this range. Exiting.\n", arguments->io_trigger);
@@ -436,6 +448,7 @@ void populate_arrays(struct arguments *arguments) {
         int io_w = atoi (arguments->io_window);
         if (io_w >= 500 && io_w <= 10000000) { // 500ms to 10s
             tracking_window_ms[1] = io_w;
+            if (tracking_window_ms[1] < delay_threshold_ms[1]) tracking_window_ms[1] = delay_threshold_ms[1];
         } else {
             printf("The  -i or --io-win option required to be integer between 500 to 10000000 (ms)\n", arguments->io_window);
             printf("%s is not an integer in this range. Exiting.\n", arguments->io_window);
@@ -447,6 +460,7 @@ void populate_arrays(struct arguments *arguments) {
         int mem_t = atoi (arguments->mem_trigger);
         if (mem_t >= 50 && mem_t <= 1000) { // 50ms to 1s
             delay_threshold_ms[2] = mem_t; 
+            if (tracking_window_ms[2] < mem_t) tracking_window_ms[2] = mem_t; 
         } else {
             printf("The -M or --mem-trig option is required integer between 50 to 1000 (ms)\n", arguments->mem_trigger);
             printf("%s is not an integer in this range. Exiting.\n", arguments->mem_trigger);
@@ -459,6 +473,7 @@ void populate_arrays(struct arguments *arguments) {
         int mem_w = atoi (arguments->mem_window);
         if (mem_w >= 500 && mem_w <= 10000000) { // 500ms to 10s
             tracking_window_ms[2] = mem_w;
+            if (tracking_window_ms[2] < delay_threshold_ms[2]) tracking_window_ms[2] = delay_threshold_ms[2];
         } else {
             printf("The  -m or --mem-win option required to be integer between 500 to 10000000 (ms)\n", arguments->mem_window);
             printf("%s is not an integer in this range. Exiting.\n", arguments->mem_window);
@@ -469,7 +484,7 @@ void populate_arrays(struct arguments *arguments) {
 // global trigger and threshold
     if (arguments->all_trigger != NULL) {
         if (arguments->cpu_trigger != NULL || arguments->io_trigger != NULL || arguments->mem_trigger != NULL) {
-            printf("The -T or --all-trig option cannot be used with cpu, io, or memory options.\n", arguments->all_trigger);
+            printf("The -t or --all-trig option cannot be used with cpu, io, or memory options.\n", arguments->all_trigger);
             exit(ERROR_ALL_TRIG_VALUE);
         }
         int all_t = atoi (arguments->all_trigger);
@@ -477,8 +492,11 @@ void populate_arrays(struct arguments *arguments) {
             delay_threshold_ms[0] = all_t; 
             delay_threshold_ms[1] = all_t; 
             delay_threshold_ms[2] = all_t; 
+            tracking_window_ms[0] = ( all_t > delay_threshold_ms[0] ? all_t : tracking_window_ms[0] );
+            tracking_window_ms[1] = ( all_t > delay_threshold_ms[1] ? all_t : tracking_window_ms[1] );
+            tracking_window_ms[2] = ( all_t > delay_threshold_ms[2] ? all_t : tracking_window_ms[2] );
         } else {
-            printf("The -T or --all-trig option is required integer between 50 to 1000 (ms)\n", arguments->all_trigger);
+            printf("The -t or --all-trig option is required integer between 50 to 1000 (ms)\n", arguments->all_trigger);
             exit(ERROR_ALL_TRIG_VALUE);
         }
     }
@@ -486,16 +504,16 @@ void populate_arrays(struct arguments *arguments) {
     if (arguments->all_window != NULL) {
 
         if (arguments->cpu_window != NULL || arguments->io_window != NULL || arguments->mem_window != NULL) {
-            printf("The -t or --all-window option cannot be used with cpu, io, or memory window options.\n", arguments->all_trigger);
-            exit(ERROR_ALL_TRIG_VALUE);
+            printf("The -T or --all-win option cannot be used with cpu, io, or memory window options.\n", arguments->all_trigger);
+            exit(ERROR_ALL_WIN_VALUE);
         }
         int all_w = atoi (arguments->all_window);
         if (all_w >= 500 && all_w <= 10000000) { // 500ms to 10s
-            tracking_window_ms[0] = all_w;
-            tracking_window_ms[1] = all_w;
-            tracking_window_ms[2] = all_w;
+            tracking_window_ms[0] = ( all_w > delay_threshold_ms[0] ? all_w : delay_threshold_ms[0] );
+            tracking_window_ms[1] = ( all_w > delay_threshold_ms[1] ? all_w : delay_threshold_ms[1] );
+            tracking_window_ms[2] = ( all_w > delay_threshold_ms[2] ? all_w : delay_threshold_ms[2] );
         } else {
-            printf("The  -t or --all-win option required to be integer between 500 to 10000000 (ms)\n", arguments->all_window);
+            printf("The  -T or --all-win option required to be integer between 500 to 10000000 (ms)\n", arguments->all_window);
             printf("%s is not an integer in this range. Exiting.\n", arguments->all_window);
             exit(ERROR_ALL_WIN_VALUE);
         }
@@ -514,6 +532,7 @@ main (int argc, char **argv)
   arguments.verbose = 0;
   arguments.output_file = "-";
   arguments.abort = 0;
+  arguments.full = 0;
   int repeat_count = 1;
 
 
@@ -535,7 +554,7 @@ main (int argc, char **argv)
 */
     populate_arrays(&arguments);
     verify_proc_pressure();
-    poll_pressure_events();
+    poll_pressure_events(arguments.full);
     signal(SIGTERM, sig_handler); 
     signal(SIGINT, sig_handler);
     pressure_event_loop();

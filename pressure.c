@@ -55,7 +55,7 @@
 #define ERROR_IO_TRIG_VALUE         9
 #define ERROR_IO_WIN_VALUE          10
 #define ERROR_MEM_TRIG_VALUE        11
-#define ERROR_MEM_WIN_VALUE         128
+#define ERROR_MEM_WIN_VALUE         12
 
 
 /* This program uses the same features as example 3, but has more
@@ -430,6 +430,28 @@ void populate_arrays(struct arguments *arguments) {
         }
     }
 
+    if (arguments->mem_trigger != NULL) {
+        int mem_t = atoi (arguments->mem_trigger);
+        if (mem_t >= 50 && mem_t <= 1000) { // 50ms to 1s
+            delay_threshold_ms[2] = mem_t; 
+        } else {
+            printf("The -M or --mem-trig option is required integer between 50 to 1000 (ms)\n", arguments->mem_trigger);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->mem_trigger);
+
+            exit(ERROR_MEM_TRIG_VALUE);
+        }
+    }
+
+    if (arguments->mem_window != NULL) {
+        int mem_w = atoi (arguments->mem_window);
+        if (mem_w >= 500 && mem_w <= 10000000) { // 500ms to 10s
+            tracking_window_ms[2] = mem_w;
+        } else {
+            printf("The  -m or --mem-win option required to be integer between 500 to 10000000 (ms)\n", arguments->mem_window);
+            printf("%s is not an integer in this range. Exiting.\n", arguments->mem_window);
+            exit(ERROR_MEM_WIN_VALUE);
+        }
+    }
 }
 /* Our argp parser. */
 static struct argp argp = { options, parse_opt, args_doc, doc };

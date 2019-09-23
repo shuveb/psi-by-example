@@ -133,14 +133,17 @@ static struct argp_option options[] = {
 
 /* close all file descriptors before exiting */
 void close_fds(){
-    fprintf(stderr, "Please wait until all three file descriptors are closed\n");
+    fprintf(stderr, "Please wait until all file descriptors are closed\n");
     for (int i=0; i < SZ_IDX; i++){
         fprintf(stderr, "Closing file descriptor fds[%i] for %s\n", i, pressure_file[i]);
         usleep(tracking_window_ms[i] * MS_TO_US);
         close(fds[i].fd);
     }
-    fclose(outstream);
-    fprintf(stderr, "\nAll file descriptors now closed, exiting now!\n");
+    if (arguments.output_file != NULL) {
+        fprintf(stderr, "Closing file descriptor %s\n", arguments.output_file);
+        fclose(outstream);
+    }
+    fprintf(stderr, "\nAll file descriptors closed, exiting now!\n");
 }
 
 /* signal handler for SIGINT and SIGTERM */
@@ -262,7 +265,8 @@ void pressure_event_loop() {
                 set_time_str(FMT_YMD_HMS);
                 read_psi_file(i);
                 fprintf(outstream, "%s %i %s %s\n", pressure_file[i], ++event_counter[i], time_str, content_str);
-                if (arguments.quiet == 0) fprintf(stdout, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
+                if (arguments.quiet == 0) 
+                  fprintf(stdout, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
                 exit(ERROR_PRESSURE_EVENT_UNK);
@@ -281,8 +285,10 @@ void verify_proc_pressure() {
         exit(ERROR_KERNEL_UNSUPPORTED);
     } else {
         set_time_str(FMT_YMD_HMS);
-        fprintf(outstream, "Polling events starting at %s", time_str);
-        if (arguments.quiet == 0) fprintf(stdout, "Polling events starting at %s", time_str);
+        if (arguments.quiet == 0) {
+          fprintf(outstream, "Polling events starting at %s", time_str);
+          fprintf(stdout, "Polling events starting at %s", time_str);
+        }
     }
 }
 
@@ -343,7 +349,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARGP_KEY_NO_ARGS:
-      // argp_usage (state);
+      printf("%s arg1\n", arguments->arg1);
       break;
 
     case ARGP_KEY_ARG:
@@ -374,11 +380,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 
 void populate_arrays(struct arguments *arguments) {
-    // struct arguments *arguments = state->input;
 /* The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
-*
+ * Use these limits to validate options
 */
-    if (arguments->output_file != NULL) {
+    if (arguments->output_file != "") {
 	    outstream = fopen(arguments->output_file, "w");
     } else { 
         outstream = stdout;
@@ -502,7 +507,7 @@ void set_defaults (){
   /* Default values. */
   arguments.quiet = 0;
   arguments.verbose = 0;
-  arguments.output_file = "-";
+  arguments.output_file = "";
   arguments.abort = 0;
   arguments.full = 0;
   arguments.some = 1;

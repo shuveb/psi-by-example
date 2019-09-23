@@ -1,0 +1,22 @@
+Polling events starting at 2019-09-22 16:30:44
+/proc/pressure/cpu distress_event:
+some 500000 500000
+/proc/pressure/cpu content:
+some avg10=0.00 avg60=0.00 avg300=1.45 total=322353004
+
+
+/proc/pressure/io distress_event:
+some 50000 500000
+/proc/pressure/io content:
+some avg10=0.06 avg60=0.36 avg300=1.62 total=335446217
+full avg10=0.06 avg60=0.35 avg300=0.23 total=219532920
+
+
+/proc/pressure/memory distress_event:
+some 50000 500000
+/proc/pressure/memory content:
+some avg10=0.00 avg60=0.00 avg300=0.00 total=0
+full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+
+
+Polling for events...

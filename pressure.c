@@ -11,26 +11,29 @@
 #include <time.h>
 #include <unistd.h>
 
-/* kernel accepts window sizes ranging from 500ms to 10s */
+
+/* kernel accepts window sizes ranging from 500ms to 10s 
+ * Default to minimum window size for polling */
 #define CPU_WIN                     500     // 0.5 seconds
-#define IO_WIN                      500    // 1 second
-#define MEM_WIN                     500     // 0.75 seconds 
+#define IO_WIN                      500    // 1000 is 1 second
+#define MEM_WIN                     500     // 750 is 0.75 seconds 
 #define MS_TO_US                    1000    // millisecs to microseconds factor
 
-/* min monitoring update interval is 50ms and max is 1s */
+/* min monitoring update interval is 50ms and max is 1s 
+ * Default to minimum trigger threshold for delay */
 #define CPU_TRIG                    50      // 50 ms
-#define IO_TRIG                     50     // 0.1 seconds
-#define MEM_TRIG                    50      // 75 ms
+#define IO_TRIG                     50     // 100 is 0.1 seconds
+#define MEM_TRIG                    50      // 75 is 75 ms
 
 /* paths to the pressure stall information files writable by kernel 5.2+ */
-#define CPU_PRESSURE_FILE           "/proc/pressure/cpu"
-#define IO_PRESSURE_FILE            "/proc/pressure/io"
-#define MEMORY_PRESSURE_FILE        "/proc/pressure/memory"
+#define CPU_PSI           "/proc/pressure/cpu"
+#define IO_PSI            "/proc/pressure/io"
+#define MEMORY_PSI        "/proc/pressure/memory"
 
 /* index values to refer to each of the pressure files */
-#define FD_CPU_IDX                  0
-#define FD_IO_IDX                   1
-#define FD_MEMORY_IDX               2
+#define IDX_CPU                  0
+#define IDX_IO                   1
+#define IDX_MEM               2
 
 /* format values to refer to '%T' vs '%s' time formats */
 #define FMT_YMD_HMS                 0
@@ -48,7 +51,7 @@
 #define ERROR_PRESSURE_OPEN         2 
 #define ERROR_PRESSURE_WRITE        3 
 #define ERROR_PRESSURE_POLL_FDS     4
-#define ERROR_PRESSURE_FILE_GONE    5
+#define ERROR_PSI_GONE    5
 #define ERROR_PRESSURE_EVENT_UNK    6   
 #define ERROR_CPU_TRIG_VALUE        7
 #define ERROR_CPU_WIN_VALUE         8
@@ -73,7 +76,7 @@ being stalled by unavailable CPU, I/O, or Memory resources. \
 Use as-is without any warranties.\n";
 
 /* A description of the arguments we accept. */
-static char args_doc[] = "[OPTION...]";
+static char args_doc[] = "[some]|full|both [OPTION...]";
 
 /* Keys for options without short-options. */
 #define OPT_ABORT  1            /* –abort */
@@ -84,9 +87,6 @@ struct arguments
   char *arg1;                   /* arg1 */
   char **strings;               /* [string…] */
   int quiet, verbose, abort;   /* ‘-s’, ‘-v’, ‘--abort’ */
-  int full;                     /* ‘-f’ */
-  int both;                     /* ‘-b’ */
-  int some;                     /* '-s' */
   char *output_file;            /* file arg to ‘--output’ */
   char *cpu_window;             /* file arg to ‘--cpu-window’ */
   char *cpu_trigger;            /* file arg to ‘--cpu-trig’ */
@@ -105,23 +105,28 @@ struct pollfd fds[SZ_IDX];
 char content_str[SZ_CONTENT];
 char *pressure_file[SZ_IDX];
 char time_str[SZ_TIME];
+int active_tracking[SZ_IDX];
 int delay_threshold_ms[SZ_IDX];
 int tracking_window_ms[SZ_IDX];
 int continue_event_loop = 1;
+int full;                     
+int some;                     
+
+int MIN_WIN = 500;       // 0.5 seconds
+int MAX_WIN = 10000;     // ten seconds
+int MIN_TRIG = 50;       // 0.05 seconds or 50 ms
+int MAX_TRIG = 1000;     // ten seconds
 
 /* The argp_options that show in help.*/
 static struct argp_option options[] = {
-  {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) to CPU_WIN" },
-  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) to CPU_TRIG" },
-  {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) to IO_WIN" },
-  {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) to IO_TRIG" },
-  {"full", 'f', 0, 0, "Set thresholds for full pressure" },
-  {"both", 'b', 0, 0, "Set thresholds for both some and full pressure" },
-  {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) to MEM_WIN" },
-  {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) to MEM_TRIG" },
+  {"cpu-win", 'c', "CPU_WIN", 0, "Set CPU window (500-10000ms) 0 to disable CPU monitoring" },
+  {"cpu-trig", 'C', "CPU_TRIG", 0, "Set CPU threshold (50-1000ms) 0 to disable CPU monitoring" },
+  {"io-win", 'i', "IO_WIN", 0, "Set IO window (500-10000ms) 0 to disable IO monitoring" },
+  {"io-trig", 'I', "IO_TRIG", 0, "Set IO threshold (50-1000ms) 0 to disable IO monitoring" },
+  {"mem-win", 'm', "MEM_WIN", 0, "Set MEMORY window (500-10000ms) 0 to disable MEMORY monitoring" },
+  {"mem-trig", 'M', "MEM_TRIG", 0, "Set MEMORY threshold (50-1000ms) 0 to disable MEMORY monitoring" },
   {"verbose",  'v', 0,       0, "Produce verbose output" },
   {"quiet",    'q', 0,       0, "Don't produce any output" },
-  {"some", 's', 0, 0, "Set thresholds for some pressure" },
   {"all-trig", 't', "TRIGGER", 0, "Set Global threshold to (500-10000ms) to TRIGGER" },
   {"all-trigger",   'T', 0,       OPTION_ALIAS },
   {"all-win", 'w', "WIN", 0, "Set Global window (500-10000ms) to WIN" },
@@ -185,49 +190,60 @@ void poll_pressure_events() {
     char distress_event[SZ_EVENT];
 
     for (int i = 0; i < SZ_IDX; i++) {
-
-        memset(&(distress_event[0]), 0, SZ_EVENT);
+        if (active_tracking[i] == 0) continue;
+        memset(&(distress_event[0]), 0, SZ_EVENT); // clear distress_event
         fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
         if (fds[i].fd < 0) {
             fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
             exit(ERROR_PRESSURE_OPEN);
         }
         
-        if (i == 0) { // don't print full for the cpu
+        if (i == IDX_CPU) { // don't print full for the cpu
+          if (some == 1) {
             snprintf(distress_event, SZ_EVENT, "some %d %d",
                     delay_threshold_ms[i] * MS_TO_US,
                     tracking_window_ms[i] * MS_TO_US);
-            fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-	        if (arguments.quiet == 0) 
-		        fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-	    } else { 
-            if (arguments.full == 1) {
-            snprintf(distress_event, SZ_EVENT, "full %d %d",
-                    delay_threshold_ms[i] * MS_TO_US,
-                    tracking_window_ms[i] * MS_TO_US);
-            fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-            if (arguments.quiet == 0) 
-                    fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
+              fprintf(stderr, "Error write() pressure file: %s\n",
+                  pressure_file[i]);
+              exit(ERROR_PRESSURE_WRITE);
             }
-            if (arguments.some == 1) {
-            snprintf(distress_event, SZ_EVENT, "some %d %d",
-                    delay_threshold_ms[i] * MS_TO_US,
-                    tracking_window_ms[i] * MS_TO_US);
-            fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            if (arguments.output_file != NULL) 
+              fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
             if (arguments.quiet == 0) 
-                    fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+              fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            }
+	    } else { 
+            if (full == 1) {
+              snprintf(distress_event, SZ_EVENT, "full %d %d",
+                      delay_threshold_ms[i] * MS_TO_US,
+                      tracking_window_ms[i] * MS_TO_US);
+              if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
+                  fprintf(stderr, "Error write() pressure file: %s\n",
+                      pressure_file[i]);
+                  exit(ERROR_PRESSURE_WRITE);
+                  }
+              if (arguments.output_file != NULL) 
+                fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+              if (arguments.quiet == 0) 
+                      fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            }
+            if (some == 1) {
+              snprintf(distress_event, SZ_EVENT, "some %d %d",
+                      delay_threshold_ms[i] * MS_TO_US,
+                      tracking_window_ms[i] * MS_TO_US);
+              if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
+                  fprintf(stderr, "Error write() pressure file: %s\n",
+                      pressure_file[i]);
+                  exit(ERROR_PRESSURE_WRITE);
+                  }
+              if (arguments.output_file != NULL) 
+                fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+              if (arguments.quiet == 0) 
+                      fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+            }
 	        }
-        }
         fds[i].events = POLLPRI;
-        read_psi_file(i);
-        fprintf(outstream, "%s content:\n%s\n", pressure_file[i], content_str);
-        if (arguments.quiet == 0) fprintf(stdout, "%s content:\n%s\n", pressure_file[i], content_str);
-        if (write(fds[i].fd, distress_event, strlen(distress_event) + 1) < 0) {
-            fprintf(stderr, "Error write() pressure file: %s\n",
-                pressure_file[i]);
-            exit(ERROR_PRESSURE_WRITE);
-        }
-           
     }
 }
 
@@ -239,32 +255,36 @@ void pressure_event_loop() {
     int event_counter[SZ_IDX];
 
     for (int i = 0; i < SZ_IDX; i++) {
-        event_counter[i] = 1;
+        event_counter[i] = 0;
     }
 
-    fprintf(outstream, "\nPolling for events...\n");
-    if (arguments.quiet == 0) 
-            fprintf(stdout, "\nPolling for events...\n");
     while (continue_event_loop == 1) {
         int n = poll(fds, SZ_IDX, -1);
-        if (continue_event_loop == 0) break;
+        if (active_tracking[IDX_CPU] == 0 && active_tracking[IDX_IO] == 0 && active_tracking[IDX_MEM] == 0)   {
+          printf("\nThere is nothing to monitor. Exiting program.\n");
+          exit(ERROR_PRESSURE_POLL_FDS);
+        }
+        if ( continue_event_loop == 0) break;
         if (n < 0) {
             fprintf(stderr, "\nError using poll() function\n");
             exit(ERROR_PRESSURE_POLL_FDS);
         }
-
         for (int i = 0; i < SZ_IDX; i++) {
+            if (full == 1 && some == 0 && i == 0) continue; //skip polling cpu if only full
+            if (active_tracking[i] == 0) continue; // if not tracking pressure resource
             if ((fds[i].revents == 0) || (continue_event_loop == 0)) {
                 continue;
             }
             if (fds[i].revents & POLLERR) {
                 fprintf(stderr, "\nError: poll() event source is gone.\n");
-                exit(ERROR_PRESSURE_FILE_GONE);
+                exit(ERROR_PSI_GONE);
             }
             if (fds[i].events) { // An event has crossed the trigger threshold within the tracking window
                 set_time_str(FMT_YMD_HMS);
                 read_psi_file(i);
-                fprintf(outstream, "%s %i %s %s\n", pressure_file[i], ++event_counter[i], time_str, content_str);
+                event_counter[i]++;
+                if (arguments.output_file != NULL) 
+                  fprintf(outstream, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
                 if (arguments.quiet == 0) 
                   fprintf(stdout, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
             } else {
@@ -276,19 +296,26 @@ void pressure_event_loop() {
 }
 
 void verify_proc_pressure() {
-    struct stat st;
-    int sret = stat(CPU_PRESSURE_FILE, &st);
-
-    if (sret == -1) {
-        fprintf(stderr,
+    for (int i = 0; i < SZ_IDX; i++) {
+        fds[i].fd = open(pressure_file[i], O_RDWR | O_NONBLOCK);
+        if (fds[i].fd < 0) {
+            fprintf(stderr, "Error open() pressure file %s:", pressure_file[i]);
+            fprintf(stderr,
                 "To monitor with poll() in Linux, uname -r must report a kernel version of 5.2+\n");
-        exit(ERROR_KERNEL_UNSUPPORTED);
-    } else {
-        set_time_str(FMT_YMD_HMS);
-        if (arguments.quiet == 0) {
-          fprintf(outstream, "Polling events starting at %s", time_str);
-          fprintf(stdout, "Polling events starting at %s", time_str);
+            exit(ERROR_KERNEL_UNSUPPORTED);
+        } else {
+          read_psi_file(i);
+          if (arguments.output_file != NULL) 
+            fprintf(outstream, "%s content:\n%s\n", pressure_file[i], content_str);
+          if (arguments.quiet == 0) 
+            fprintf(stdout, "%s content:\n%s\n", pressure_file[i], content_str);
         }
+    }
+    set_time_str(FMT_YMD_HMS);
+    if (arguments.quiet == 0) {
+      if (arguments.output_file != NULL) 
+        fprintf(outstream, "Polling events starting at %s", time_str);
+      fprintf(stdout, "Polling events starting at %s", time_str);
     }
 }
 
@@ -307,14 +334,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
     case 'v':
       arguments->verbose = 1;
-      break;
-    case 'f':
-      arguments->full = 1;
-      arguments->some = 0;
-      break;
-    case 'b':
-      arguments->full = 1;
-      arguments->some = 1;
       break;
     case 'c':
       arguments->cpu_window = arg;
@@ -337,10 +356,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case 'o':
       arguments->output_file = arg;
       break;
-    case 's':
-      arguments->full = 0;
-      arguments->some = 1;
-      break;
     case 't':
       arguments->all_window = arg;
       break;
@@ -349,25 +364,25 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARGP_KEY_NO_ARGS:
-      printf("%s arg1\n", arguments->arg1);
       break;
 
     case ARGP_KEY_ARG:
-      /* Here we know that state->arg_num == 0, since we
-         force argument parsing to end before any more arguments can
-         get here. */
       arguments->arg1 = arg;
-
-      /* Now we consume all the rest of the arguments.
-         state->next is the index in state->argv of the
-         next argument to be parsed, which is the first string
-         we’re interested in, so we can just use
-         &state->argv[state->next] as the value for
-         arguments->strings.
-
-         In addition, by setting state->next to the end
-         of the arguments, we can force argp to stop parsing here and
-         return. */
+      if (strcmp(arg, "some") == 0) {  
+          some = 1;
+          full = 0;
+        } else if (strcmp(arg, "full") == 0) {
+          some = 0;
+          full = 1;
+        } else if (strcmp(arg, "both") == 0) {
+          some = 1;
+          full = 1;
+        } else {
+        // default to some
+        //  some = 1;
+        //  full = 0;
+          printf("%s\n", doc);
+      } 
       arguments->strings = &state->argv[state->next];
       state->next = state->argc;
 
@@ -383,7 +398,7 @@ void populate_arrays(struct arguments *arguments) {
 /* The kernel accepts window sizes ranging from 500ms to 10s, therefore min monitoring update interval is 50ms and max is 1s.
  * Use these limits to validate options
 */
-    if (arguments->output_file != "") {
+    if (arguments->output_file != NULL) {
 	    outstream = fopen(arguments->output_file, "w");
     } else { 
         outstream = stdout;
@@ -391,9 +406,12 @@ void populate_arrays(struct arguments *arguments) {
     
     if (arguments->cpu_trigger != NULL) {
         int cpu_t = atoi (arguments->cpu_trigger);
-        if (cpu_t >= 50 && cpu_t <= 1000) { // 50ms to 1s
-            delay_threshold_ms[0] = cpu_t; 
-            if (tracking_window_ms[0] < cpu_t) tracking_window_ms[0] = cpu_t; 
+        if (cpu_t >= MIN_TRIG && cpu_t <= MAX_TRIG) { // 50ms to 1s
+            delay_threshold_ms[IDX_CPU] = cpu_t; 
+            if (tracking_window_ms[IDX_CPU] < cpu_t) tracking_window_ms[IDX_CPU] = cpu_t; 
+        } else if (cpu_t == 0) { // disable cpu monitoring
+          fprintf(stdout, "Since -C or --cpu-trig was set to 0, CPU pressure stall monitoring is disabled\n");
+          active_tracking[IDX_CPU] = 0;
         } else {
             fprintf(stderr, "The -C or --cpu-trig option is required integer between 50 to 1000 (ms)\n", arguments->cpu_trigger);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->cpu_trigger);
@@ -404,8 +422,12 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->cpu_window != NULL) {
         int cpu_w = atoi (arguments->cpu_window);
-        if (cpu_w >= 500 && cpu_w <= 10000000) { // 500ms to 10s
-            if (tracking_window_ms[0] < delay_threshold_ms[0]) tracking_window_ms[0] = delay_threshold_ms[0];
+        if (cpu_w >= MIN_WIN && cpu_w <= MAX_WIN) { // 500ms to 10s
+            if (tracking_window_ms[IDX_CPU] < delay_threshold_ms[IDX_CPU]) 
+                tracking_window_ms[IDX_CPU] = delay_threshold_ms[IDX_CPU];
+        } else if (cpu_w == 0) { // disable cpu monitoring
+          fprintf(stdout, "Since -c or --cpu-win was set to 0, CPU pressure stall monitoring is disabled\n");
+          active_tracking[IDX_CPU] = 0;
         } else {
             fprintf(stderr, "The  -c or --cpu-win option required to be integer between 500 to 10000000 (ms)\n", arguments->cpu_window);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->cpu_window);
@@ -416,9 +438,12 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->io_trigger != NULL) {
         int io_t = atoi (arguments->io_trigger);
-        if (io_t >= 50 && io_t <= 1000) { // 50ms to 1s
-            delay_threshold_ms[1] = io_t; 
-            if (tracking_window_ms[1] < io_t) tracking_window_ms[1] = io_t; 
+        if (io_t >= MIN_TRIG && io_t <= MAX_TRIG) { // 50ms to 1s
+            delay_threshold_ms[IDX_IO] = io_t; 
+            if (tracking_window_ms[IDX_IO] < io_t) tracking_window_ms[IDX_IO] = io_t; 
+        } else if (io_t == 0) { // disable IO monitoring
+          fprintf(stdout, "Since -Ior --io-trig was set to 0, IO pressure stall monitoring is disabled\n");
+          active_tracking[IDX_IO] = 0;
         } else {
             fprintf(stderr, "The -I or --io-trig option is required integer between 50 to 1000 (ms)\n", arguments->io_trigger);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->io_trigger);
@@ -428,9 +453,13 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->io_window != NULL) {
         int io_w = atoi (arguments->io_window);
-        if (io_w >= 500 && io_w <= 10000000) { // 500ms to 10s
-            tracking_window_ms[1] = io_w;
-            if (tracking_window_ms[1] < delay_threshold_ms[1]) tracking_window_ms[1] = delay_threshold_ms[1];
+        if (io_w >= MIN_WIN && io_w <= MAX_WIN) { // 500ms to 10s
+            tracking_window_ms[IDX_IO] = io_w;
+            if (tracking_window_ms[IDX_IO] < delay_threshold_ms[IDX_IO]) 
+              tracking_window_ms[IDX_IO] = delay_threshold_ms[IDX_IO];
+        } else if (io_w == 0) { // disable IO monitoring
+          fprintf(stdout, "Since -i or --io-win was set to 0, IO pressure stall monitoring is disabled\n");
+          active_tracking[IDX_IO] = 0;
         } else {
             fprintf(stderr, "The  -i or --io-win option required to be integer between 500 to 10000000 (ms)\n", arguments->io_window);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->io_window);
@@ -440,9 +469,12 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->mem_trigger != NULL) {
         int mem_t = atoi (arguments->mem_trigger);
-        if (mem_t >= 50 && mem_t <= 1000) { // 50ms to 1s
-            delay_threshold_ms[2] = mem_t; 
-            if (tracking_window_ms[2] < mem_t) tracking_window_ms[2] = mem_t; 
+        if (mem_t >= MIN_TRIG && mem_t <= MAX_TRIG) { // 50ms to 1s
+            delay_threshold_ms[IDX_MEM] = mem_t; 
+            if (tracking_window_ms[IDX_MEM] < mem_t) tracking_window_ms[IDX_MEM] = mem_t; 
+        } else if (mem_t == 0) { // disable MEMORY monitoring
+          fprintf(stdout, "Since -M or --mem-trig was set to 0, MEMORY pressure stall monitoring is disabled\n");
+          active_tracking[IDX_MEM] = 0;
         } else {
             fprintf(stderr, "The -M or --mem-trig option is required integer between 50 to 1000 (ms)\n", arguments->mem_trigger);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->mem_trigger);
@@ -452,9 +484,13 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->mem_window != NULL) {
         int mem_w = atoi (arguments->mem_window);
-        if (mem_w >= 500 && mem_w <= 10000000) { // 500ms to 10s
-            tracking_window_ms[2] = mem_w;
-            if (tracking_window_ms[2] < delay_threshold_ms[2]) tracking_window_ms[2] = delay_threshold_ms[2];
+        if (mem_w >= MIN_WIN && mem_w <= MAX_WIN) { // 500ms to 10s
+            tracking_window_ms[IDX_MEM] = mem_w;
+            if (tracking_window_ms[IDX_MEM] < delay_threshold_ms[IDX_MEM]) 
+              tracking_window_ms[IDX_MEM] = delay_threshold_ms[IDX_MEM];
+        } else if (mem_w == 0) { // disable MEMORY monitoring
+          fprintf(stdout, "Since -m or --mem-win was set to 0, MEMORY pressure stall monitoring is disabled\n");
+          active_tracking[IDX_MEM] = 0;
         } else {
             fprintf(stderr, "The  -m or --mem-win option required to be integer between 500 to 10000000 (ms)\n", arguments->mem_window);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->mem_window);
@@ -468,15 +504,18 @@ void populate_arrays(struct arguments *arguments) {
             fprintf(stderr, "The -t or --all-trig option cannot be used with cpu, io, or memory options.\n", arguments->all_trigger);
             exit(ERROR_ALL_TRIG_VALUE);
         }
+        active_tracking[IDX_CPU] = 1;
+        active_tracking[IDX_IO] = 1;
+        active_tracking[IDX_MEM] = 1;
         int all_t = atoi (arguments->all_trigger);
-        if (all_t >= 50 && all_t <= 1000) { // 50ms to 1s
-            delay_threshold_ms[0] = all_t; 
-            delay_threshold_ms[1] = all_t; 
-            delay_threshold_ms[2] = all_t; 
+        if (all_t >= MIN_TRIG && all_t <= MAX_TRIG) { // 50ms to 1s
+            delay_threshold_ms[IDX_CPU] = all_t; 
+            delay_threshold_ms[IDX_IO] = all_t; 
+            delay_threshold_ms[IDX_MEM] = all_t; 
             // ensure tracking_window_ms >= delay_threshold_ms
-            tracking_window_ms[0] = ( all_t > delay_threshold_ms[0] ? all_t : tracking_window_ms[0] );
-            tracking_window_ms[1] = ( all_t > delay_threshold_ms[1] ? all_t : tracking_window_ms[1] );
-            tracking_window_ms[2] = ( all_t > delay_threshold_ms[2] ? all_t : tracking_window_ms[2] );
+            tracking_window_ms[IDX_CPU] = ( all_t > delay_threshold_ms[IDX_CPU] ? all_t : tracking_window_ms[IDX_CPU] );
+            tracking_window_ms[IDX_IO] = ( all_t > delay_threshold_ms[IDX_IO] ? all_t : tracking_window_ms[IDX_IO] );
+            tracking_window_ms[IDX_MEM] = ( all_t > delay_threshold_ms[IDX_MEM] ? all_t : tracking_window_ms[IDX_MEM] );
         } else {
             fprintf(stderr, "The -t or --all-trig option is required integer between 50 to 1000 (ms)\n", arguments->all_trigger);
             exit(ERROR_ALL_TRIG_VALUE);
@@ -489,12 +528,15 @@ void populate_arrays(struct arguments *arguments) {
             fprintf(stderr, "The -T or --all-win option cannot be used with cpu, io, or memory window options.\n", arguments->all_trigger);
             exit(ERROR_ALL_WIN_VALUE);
         }
+        active_tracking[IDX_CPU] = 1;
+        active_tracking[IDX_IO] = 1;
+        active_tracking[IDX_MEM] = 1;
         int all_w = atoi (arguments->all_window);
         // ensure tracking_window_ms >= delay_threshold_ms
-        if (all_w >= 500 && all_w <= 10000000) { // 500ms to 10s
-            tracking_window_ms[0] = ( all_w > delay_threshold_ms[0] ? all_w : delay_threshold_ms[0] );
-            tracking_window_ms[1] = ( all_w > delay_threshold_ms[1] ? all_w : delay_threshold_ms[1] );
-            tracking_window_ms[2] = ( all_w > delay_threshold_ms[2] ? all_w : delay_threshold_ms[2] );
+        if (all_w >= MIN_WIN && all_w <= MAX_WIN) { // 500ms to 10s
+            tracking_window_ms[IDX_CPU] = ( all_w > delay_threshold_ms[IDX_CPU] ? all_w : delay_threshold_ms[IDX_CPU] );
+            tracking_window_ms[IDX_IO] = ( all_w > delay_threshold_ms[IDX_IO] ? all_w : delay_threshold_ms[IDX_IO] );
+            tracking_window_ms[IDX_MEM] = ( all_w > delay_threshold_ms[IDX_MEM] ? all_w : delay_threshold_ms[IDX_MEM] );
         } else {
             fprintf(stderr, "The  -T or --all-win option required to be integer between 500 to 10000000 (ms)\n", arguments->all_window);
             fprintf(stderr, "%s is not an integer in this range. Exiting.\n", arguments->all_window);
@@ -507,20 +549,23 @@ void set_defaults (){
   /* Default values. */
   arguments.quiet = 0;
   arguments.verbose = 0;
-  arguments.output_file = "";
+  arguments.output_file = NULL;
   arguments.abort = 0;
-  arguments.full = 0;
-  arguments.some = 1;
+  full = 0;
+  some = 1;
 
-  pressure_file[0] = CPU_PRESSURE_FILE;       // "/proc/pressure/cpu";
-  pressure_file[1] = IO_PRESSURE_FILE;        // "/proc/pressure/io";
-  pressure_file[2] = MEMORY_PRESSURE_FILE;    //"/proc/pressure/memory";
-  delay_threshold_ms[0] = CPU_TRIG; 
-  delay_threshold_ms[1] = IO_TRIG;
-  delay_threshold_ms[2] = MEM_TRIG;
-  tracking_window_ms[0] = CPU_WIN;
-  tracking_window_ms[1] = IO_WIN;
-  tracking_window_ms[2] = MEM_WIN;
+  pressure_file[IDX_CPU] = CPU_PSI;       // "/proc/pressure/cpu";
+  pressure_file[IDX_IO] = IO_PSI;        // "/proc/pressure/io";
+  pressure_file[IDX_MEM] = MEMORY_PSI;    //"/proc/pressure/memory";
+  active_tracking[IDX_CPU] = 1;
+  active_tracking[IDX_IO] = 1;
+  active_tracking[IDX_MEM] = 1;
+  delay_threshold_ms[IDX_CPU] = CPU_TRIG; 
+  delay_threshold_ms[IDX_IO] = IO_TRIG;
+  delay_threshold_ms[IDX_MEM] = MEM_TRIG;
+  tracking_window_ms[IDX_CPU] = CPU_WIN;
+  tracking_window_ms[IDX_IO] = IO_WIN;
+  tracking_window_ms[IDX_MEM] = MEM_WIN;
 }
 
 /* Our argp parser. */

@@ -152,23 +152,25 @@ void set_time_str(int fmt) {
 
 /* close all file descriptors before exiting */
 void close_fds(){
-    fprintf(stderr, "Please wait until all file descriptors are closed\n");
-    set_time_str(FMT_YMD_HMS);
-    if (arguments.quiet == 0) {
-      if (arguments.output_file != NULL) 
-        fprintf(outstream, "Polling events stopping at %s\n", time_str);
-      fprintf(stdout, "Polling events stopping at %s\n", time_str);
+    if (arguments.verbose == 1) {
+      fprintf(stderr, "Please wait until all file descriptors are closed\n");
+      set_time_str(FMT_YMD_HMS);
+      if (arguments.quiet == 0) {
+        if (arguments.output_file != NULL) 
+          fprintf(outstream, "Polling events stopping at %s\n", time_str);
+        fprintf(stdout, "Polling events stopping at %s\n", time_str);
+      }
     }
     for (int i=0; i < SZ_IDX; i++){
-        fprintf(stderr, "Closing file descriptor fds[%i] for %s\n", i, pressure_file[i]);
+        if (arguments.verbose == 1) fprintf(stderr, "Closing file descriptor fds[%i] for %s\n", i, pressure_file[i]);
         usleep(tracking_window_ms[i] * MS_TO_US);
         close(fds[i].fd);
     }
     if (arguments.output_file != NULL) {
-        fprintf(stderr, "Closing file descriptor %s\n", arguments.output_file);
+        if (arguments.verbose == 1) fprintf(stderr, "Closing file descriptor %s\n", arguments.output_file);
         fclose(outstream);
     }
-    fprintf(stderr, "\nAll file descriptors closed, exiting now!\n");
+    if (arguments.verbose == 1) fprintf(stderr, "\nAll file descriptors closed, exiting now!\n");
 }
 
 /* signal handler for SIGINT and SIGTERM */
@@ -176,11 +178,11 @@ void sig_handler(int sig_num) {
     /* Reset handler to catch SIGINT next time. 
        Refer http://en.cppreference.com/w/c/program/signal */
     if (sig_num == SIGINT) {
-      printf("\nInterrupted in response to Ctrl+C \n"); 
+      if (arguments.verbose) printf("\nInterrupted in response to Ctrl+C \n"); 
       signal(SIGINT, sig_handler); 
     }
     if (sig_num == SIGTERM) {
-      printf("\nEnding because of timeout or Terminate signal\n"); 
+      if (arguments.verbose) printf("\nEnding because of timeout or Terminate signal\n"); 
       signal(SIGTERM, sig_handler); 
     }
     continue_event_loop = 0; 
@@ -225,7 +227,7 @@ void poll_pressure_events() {
             }
             if (arguments.output_file != NULL) 
               fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-            if (arguments.quiet == 0) 
+            if (arguments.quiet == 0 && arguments.verbose == 1) 
               fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
             }
 	    } else { 
@@ -240,7 +242,7 @@ void poll_pressure_events() {
                   }
               if (arguments.output_file != NULL) 
                 fprintf(outstream, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-              if (arguments.quiet == 0) 
+              if (arguments.quiet == 0 && arguments.verbose == 1) 
                       fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
             }
             if (some == 1) {
@@ -252,10 +254,10 @@ void poll_pressure_events() {
                       pressure_file[i]);
                   exit(E_PRESSURE_WRITE);
                   }
-              if (arguments.output_file != NULL) 
-                fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
-              if (arguments.quiet == 0) 
-                      fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+                if (arguments.output_file != NULL) 
+                  fprintf(outstream,"\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
+                if (arguments.quiet == 0 && arguments.verbose == 1) 
+                        fprintf(stdout, "\n%s distress_event:\n%s\n", pressure_file[i], distress_event);
             }
 	        }
         fds[i].events = POLLPRI;
@@ -284,7 +286,6 @@ void pressure_event_loop() {
     while (continue_event_loop == 1) {
         time_now_s = time(&timer);
         time_now_s = time_now_s - start_time_s;
-        // fprintf(stdout, "-T %i time in seconds.\n", time_now_s);
         if (timeout_s > 0) {
             if (time_now_s > timeout_s){
                raise(SIGTERM);
@@ -312,7 +313,7 @@ void pressure_event_loop() {
                 event_counter[i]++;
                 if (arguments.output_file != NULL) 
                   fprintf(outstream, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
-                if (arguments.quiet == 0) 
+                if (arguments.quiet == 0 && arguments.verbose) 
                   fprintf(stdout, "%s %i %s %s\n", pressure_file[i], event_counter[i], time_str, content_str);
             } else {
                 fprintf(stderr, "\nUnrecognized event: 0x%x.\n", fds[i].revents);
@@ -334,12 +335,12 @@ void verify_proc_pressure() {
           read_psi_file(i);
           if (arguments.output_file != NULL) 
             fprintf(outstream, "%s content:\n%s\n", pressure_file[i], content_str);
-          if (arguments.quiet == 0) 
+          if (arguments.quiet == 0 && arguments.verbose == 1) 
             fprintf(stdout, "%s content:\n%s\n", pressure_file[i], content_str);
         }
     }
     set_time_str(FMT_YMD_HMS);
-    if (arguments.quiet == 0) {
+    if (arguments.quiet == 0 && arguments.verbose == 1) {
       if (arguments.output_file != NULL) 
         fprintf(outstream, "Polling events starting at %s", time_str);
       fprintf(stdout, "Polling events starting at %s", time_str);
@@ -437,7 +438,7 @@ void populate_arrays(struct arguments *arguments) {
     if (arguments->time != NULL) {
       timeout_s = atoi(arguments->time);
       if (timeout_s > 0) {
-          fprintf(stdout, "-T %s time to end monitoring in seconds.\n", arguments->time);
+          if (arguments->verbose == 1) fprintf(stdout, "-T %s time to end monitoring in seconds.\n", arguments->time);
           start_time_s = time(&start_t); 
       } else {
         exit (E_TIME_VALUE);
@@ -446,7 +447,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->cpu_trigger != NULL) {
         int cpu_t = atoi (arguments->cpu_trigger);
-        fprintf(stdout, "-C %i cpu delay_threshold_ms\n", cpu_t);
+        if (arguments->verbose == 1) fprintf(stdout, "-C %i cpu delay_threshold_ms\n", cpu_t);
         if (cpu_t >= MIN_TRIG && cpu_t <= MAX_TRIG) { // 50ms to 1s
             delay_threshold_ms[IDX_CPU] = cpu_t; 
             if (tracking_window_ms[IDX_CPU] < cpu_t) 
@@ -463,7 +464,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->cpu_window != NULL) {
         int cpu_w = atoi (arguments->cpu_window);
-        fprintf(stdout, "-c %i cpu tracking_window_ms\n", cpu_w);
+        if (arguments->verbose == 1) fprintf(stdout, "-c %i cpu tracking_window_ms\n", cpu_w);
         if (cpu_w >= MIN_WIN && cpu_w <= MAX_WIN) { // 500ms to 10s
             tracking_window_ms[IDX_CPU] = cpu_w;
             if (cpu_w < delay_threshold_ms[IDX_CPU]) {
@@ -481,7 +482,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->io_trigger != NULL) {
         int io_t = atoi (arguments->io_trigger);
-        fprintf(stdout, "-I %i io delay_threshold_ms\n", io_t);
+        if (arguments->verbose == 1) fprintf(stdout, "-I %i io delay_threshold_ms\n", io_t);
         if (io_t >= MIN_TRIG && io_t <= MAX_TRIG) { // 50ms to 1s
             delay_threshold_ms[IDX_IO] = io_t; 
             if (tracking_window_ms[IDX_IO] < io_t) 
@@ -498,7 +499,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->io_window != NULL) {
         int io_w = atoi (arguments->io_window);
-        fprintf(stdout, "-i %i io tracking_window_ms\n", io_w);
+        if (arguments->verbose == 1) fprintf(stdout, "-i %i io tracking_window_ms\n", io_w);
         if (io_w >= MIN_WIN && io_w <= MAX_WIN) { // 500ms to 10s
             tracking_window_ms[IDX_IO] = io_w;
             if (tracking_window_ms[IDX_IO] < delay_threshold_ms[IDX_IO]) 
@@ -515,7 +516,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->mem_trigger != NULL) {
         int mem_t = atoi (arguments->mem_trigger);
-        fprintf(stdout, "-M %i mem delay_threshold_ms\n", mem_t);
+        if (arguments->verbose == 1) fprintf(stdout, "-M %i mem delay_threshold_ms\n", mem_t);
         if (mem_t >= MIN_TRIG && mem_t <= MAX_TRIG) { // 50ms to 1s
             delay_threshold_ms[IDX_MEM] = mem_t; 
             if (tracking_window_ms[IDX_MEM] < mem_t) 
@@ -532,7 +533,7 @@ void populate_arrays(struct arguments *arguments) {
 
     if (arguments->mem_window != NULL) {
         int mem_w = atoi (arguments->mem_window);
-        fprintf(stdout, "-m %i mem tracking_window_ms\n", mem_w);
+        if (arguments->verbose == 1) fprintf(stdout, "-m %i mem tracking_window_ms\n", mem_w);
         if (mem_w >= MIN_WIN && mem_w <= MAX_WIN) { // 500ms to 10s
             tracking_window_ms[IDX_MEM] = mem_w;
             if (tracking_window_ms[IDX_MEM] < delay_threshold_ms[IDX_MEM]) 
@@ -557,7 +558,7 @@ void populate_arrays(struct arguments *arguments) {
         active_tracking[IDX_IO] = 1;
         active_tracking[IDX_MEM] = 1;
         int all_t = atoi (arguments->all_trigger);
-        fprintf(stdout, "-t %i all delay_threshold_ms\n", all_t);
+        if (arguments->verbose == 1) fprintf(stdout, "-t %i all delay_threshold_ms\n", all_t);
         if (all_t >= MIN_TRIG && all_t <= MAX_TRIG) { // 50ms to 1s
             delay_threshold_ms[IDX_CPU] = all_t; 
             delay_threshold_ms[IDX_IO] = all_t; 
@@ -582,7 +583,7 @@ void populate_arrays(struct arguments *arguments) {
         active_tracking[IDX_MEM] = 1;
         int all_w = atoi (arguments->all_window);
         // ensure tracking_window_ms >= delay_threshold_ms
-        printf("-w %i all tracking_window_ms\n", all_w);
+        if (arguments->verbose == 1) printf("-w %i all tracking_window_ms\n", all_w);
         if (all_w >= MIN_WIN && all_w <= MAX_WIN) { // 500ms to 10s
             tracking_window_ms[IDX_CPU] = ( all_w > delay_threshold_ms[IDX_CPU] ? all_w : delay_threshold_ms[IDX_CPU] );
             tracking_window_ms[IDX_IO] = ( all_w > delay_threshold_ms[IDX_IO] ? all_w : delay_threshold_ms[IDX_IO] );

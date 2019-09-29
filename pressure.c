@@ -51,7 +51,7 @@
 #define E_PRESSURE_OPEN         2 
 #define E_PRESSURE_WRITE        3 
 #define E_PRESSURE_POLL_FDS     4
-#define E_PSI_GONE    5
+#define E_PSI_GONE              5
 #define E_PRESSURE_EVENT_UNK    6   
 #define E_CPU_TRIG_VALUE        7
 #define E_CPU_WIN_VALUE         8
@@ -62,6 +62,7 @@
 #define E_ALL_TRIG_VALUE        13
 #define E_ALL_WIN_VALUE         14
 #define E_TIME_VALUE            15
+#define E_REQUIRED_ARGUMENT     16
 
 const char *argp_program_version =
   "pressure 0.1";
@@ -174,9 +175,14 @@ void close_fds(){
 void sig_handler(int sig_num) { 
     /* Reset handler to catch SIGINT next time. 
        Refer http://en.cppreference.com/w/c/program/signal */
-    printf("\nTerminating in response to Ctrl+C \n"); 
-    signal(SIGINT, sig_handler); 
-    signal(SIGTERM, sig_handler); 
+    if (sig_num == SIGINT) {
+      printf("\nInterrupted in response to Ctrl+C \n"); 
+      signal(SIGINT, sig_handler); 
+    }
+    if (sig_num == SIGTERM) {
+      printf("\nEnding because of timeout or Terminate signal\n"); 
+      signal(SIGTERM, sig_handler); 
+    }
     continue_event_loop = 0; 
     close_fds(); 
     fflush(stdout); 
@@ -278,7 +284,7 @@ void pressure_event_loop() {
     while (continue_event_loop == 1) {
         time_now_s = time(&timer);
         time_now_s = time_now_s - start_time_s;
-        fprintf(stdout, "-T %i time in seconds.\n", time_now_s);
+        // fprintf(stdout, "-T %i time in seconds.\n", time_now_s);
         if (timeout_s > 0) {
             if (time_now_s > timeout_s){
                raise(SIGTERM);
@@ -402,10 +408,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
           some = 1;
           full = 1;
         } else {
-        // default to some
-        //  some = 1;
-        //  full = 0;
+          fprintf(stderr, "Missing required argument some | full | both\n");
           printf("%s\n", doc);
+          exit(E_REQUIRED_ARGUMENT);     
       } 
       arguments->strings = &state->argv[state->next];
       state->next = state->argc;
@@ -438,6 +443,7 @@ void populate_arrays(struct arguments *arguments) {
         exit (E_TIME_VALUE);
       }
     }    
+
     if (arguments->cpu_trigger != NULL) {
         int cpu_t = atoi (arguments->cpu_trigger);
         fprintf(stdout, "-C %i cpu delay_threshold_ms\n", cpu_t);

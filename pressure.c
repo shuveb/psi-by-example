@@ -178,11 +178,11 @@ void sig_handler(int sig_num) {
     /* Reset handler to catch SIGINT next time. 
        Refer http://en.cppreference.com/w/c/program/signal */
     if (sig_num == SIGINT) {
-      if (arguments.verbose) printf("\nInterrupted in response to Ctrl+C \n"); 
+      if (arguments.verbose == 1) printf("\nInterrupted in response to Ctrl+C \n"); 
       signal(SIGINT, sig_handler); 
     }
     if (sig_num == SIGTERM) {
-      if (arguments.verbose) printf("\nEnding because of timeout or Terminate signal\n"); 
+      if (arguments.verbose == 1) printf("\nEnding because of timeout or Terminate signal\n"); 
       signal(SIGTERM, sig_handler); 
     }
     continue_event_loop = 0; 
@@ -599,7 +599,7 @@ void populate_arrays(struct arguments *arguments) {
 void set_defaults (){
   /* Default values. */
   arguments.quiet = 0;
-  arguments.verbose = 0;
+  arguments.verbose = 1;
   arguments.output_file = NULL;
   arguments.abort = 0;
   full = 0;

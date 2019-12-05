@@ -26,14 +26,13 @@ typedef struct dir_list {
     char **dirs;
     int begin_idx;
     int count;
-}dir_list;
+} dir_list;
 
 /*
  One function that prints the system call and the error details
  and then exits with error code 1. Non-zero meaning things didn't go well.
  */
-void fatal_error(const char *syscall)
-{
+void fatal_error(const char *syscall) {
     perror(syscall);
     exit(1);
 }
@@ -51,7 +50,8 @@ char **get_root_dir_entries() {
     int i = 0;
     while ((dir = readdir(root_dir)) != NULL) {
         /* We only save directories and those with names other than "." or ".." */
-        if (dir->d_type != DT_DIR || strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+        if (dir->d_type != DT_DIR || strcmp(dir->d_name, ".") == 0
+                || strcmp(dir->d_name, "..") == 0)
             continue;
 
         entries = realloc(entries, sizeof(char *) * (i + 1));
@@ -66,7 +66,7 @@ char **get_root_dir_entries() {
     entries = realloc(entries, sizeof(char *) * (i + 1));
     entries[i] = NULL;
 
-    return entries;
+    return (entries);
 }
 
 /*
@@ -95,10 +95,12 @@ void read_dir_contents(char *dir_path) {
                 close(fd);
             }
         }
-        if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+        if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0
+                && strcmp(entry->d_name, "..") != 0) {
             /* Found a directory, let's get into it recursively */
             char new_path[1024];
-            snprintf(new_path, sizeof(new_path), "%s/%s", dir_path, entry->d_name );
+            snprintf(new_path, sizeof(new_path), "%s/%s", dir_path,
+                    entry->d_name);
             read_dir_contents(new_path);
         }
     }
@@ -122,8 +124,9 @@ void *iterate_dirs(void *data) {
     time_t time1 = time(NULL);
     time_t time2;
     dir_list *dl = (dir_list *) data;
-    printf("I/O Loader thread starting with %d directories to traverse.\n", dl->count);
-    char **dirs = dl->dirs;
+    printf("I/O Loader thread starting with %d directories to traverse.\n",
+            dl->count);
+    /* char **dirs = dl->dirs; */
     char *dname;
     int i = dl->begin_idx;
     while (dl->count--) {
@@ -148,12 +151,13 @@ void load_disk() {
     pthread_t pthread1, pthread2;
 
     char **root_dir_entries = get_root_dir_entries();
-    while (root_dir_entries[i++] != NULL);
+    while (root_dir_entries[i++] != NULL)
+        ;
 
     dir_list dl1, dl2;
     dl1.dirs = root_dir_entries;
     dl1.begin_idx = 0;
-    dl1.count = i/2;
+    dl1.count = i / 2;
 
     dl2.dirs = root_dir_entries;
     dl2.begin_idx = dl1.count - 1;
@@ -166,15 +170,20 @@ void load_disk() {
     pthread_join(pthread1, NULL);
     pthread_join(pthread2, NULL);
 
-    printf("********************************************************************************\n");
-    printf("Now that the I/O loader threads have run, disk blocks will be cached in RAM.\n");
-    printf("You are unlikely to see further I/O-related PSI notifications should you run\n");
-    printf("this again. If you want to however, you can run this again after dropping all\n");
+    printf(
+            "********************************************************************************\n");
+    printf(
+            "Now that the I/O loader threads have run, disk blocks will be cached in RAM.\n");
+    printf(
+            "You are unlikely to see further I/O-related PSI notifications should you run\n");
+    printf(
+            "this again. If you want to however, you can run this again after dropping all\n");
     printf("disk caches like so as root:\n");
     printf("\necho 3 > /proc/sys/vm/drop_caches\n");
     printf("\nOr with sudo:\n");
     printf("echo 3 | sudo tee /proc/sys/vm/drop_caches\n");
-    printf("********************************************************************************\n");
+    printf(
+            "********************************************************************************\n");
 
     /* Free allocated memory */
     i = 0;
@@ -200,7 +209,8 @@ void *cpu_loader_thread(void *data) {
     printf("CPU Loader thread %ld starting...\n", tid);
 
     while (1) {
-        for (tid=0; tid < 50000000; tid++);
+        for (tid = 0; tid < 50000000; tid++)
+            ;
         time_t time2 = time(NULL);
         if (time2 - time1 >= CPU_LOAD_TIME_SECS)
             break;
@@ -215,12 +225,12 @@ void load_cpu() {
 
     /* Get the number of installed CPUs and create as many +1 threads. */
     long num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-    for (long i=0; i < num_cpus + 1; i++) {
+    for (long i = 0; i < num_cpus + 1; i++) {
         pthread_create(&threads[i], NULL, cpu_loader_thread, (void *) i);
     }
 
     /* Wait for all threads to complete  */
-    for (long i=0; i < num_cpus; i++) {
+    for (long i = 0; i < num_cpus; i++) {
         pthread_join(threads[i], NULL);
     }
 }
@@ -228,5 +238,4 @@ void load_cpu() {
 int main() {
     load_cpu();
     load_disk();
-    return 0;
 }

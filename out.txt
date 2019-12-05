@@ -1,0 +1,1013 @@
+Polling events starting at 2019-09-22 09:33:00
+/proc/pressure/cpu distress_event:
+some 50000 500000
+/proc/pressure/cpu content:
+some avg10=0.00 avg60=0.00 avg300=0.00 total=62964949
+
+
+/proc/pressure/io distress_event:
+some 50000 500000
+/proc/pressure/io content:
+some avg10=0.18 avg60=0.32 avg300=0.31 total=159118301
+full avg10=0.18 avg60=0.32 avg300=0.31 total=135353790
+
+
+/proc/pressure/memory distress_event:
+some 50000 500000
+/proc/pressure/memory content:
+some avg10=0.00 avg60=0.00 avg300=0.00 total=0
+full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+
+
+Polling for events...
+/proc/pressure/io 2 2019-09-22 09:33:14 some avg10=0.09 avg60=0.28 avg300=0.30 total=159197457
+full avg10=0.09 avg60=0.28 avg300=0.30 total=135378253
+
+/proc/pressure/cpu 2 2019-09-22 09:33:14 some avg10=0.00 avg60=0.00 avg300=0.00 total=63048521
+
+/proc/pressure/io 3 2019-09-22 09:33:14 some avg10=3.70 avg60=0.92 avg300=0.43 total=159606526
+full avg10=0.08 avg60=0.27 avg300=0.29 total=135378253
+
+/proc/pressure/cpu 3 2019-09-22 09:33:14 some avg10=3.62 avg60=0.65 avg300=0.13 total=63556240
+
+/proc/pressure/io 4 2019-09-22 09:33:15 some avg10=3.70 avg60=0.92 avg300=0.43 total=159809418
+full avg10=0.08 avg60=0.27 avg300=0.29 total=135378583
+
+/proc/pressure/cpu 4 2019-09-22 09:33:15 some avg10=3.62 avg60=0.65 avg300=0.13 total=64072932
+
+/proc/pressure/io 5 2019-09-22 09:33:15 some avg10=3.70 avg60=0.92 avg300=0.43 total=159939824
+full avg10=0.08 avg60=0.27 avg300=0.29 total=135380270
+
+/proc/pressure/cpu 5 2019-09-22 09:33:15 some avg10=3.62 avg60=0.65 avg300=0.13 total=64585531
+
+/proc/pressure/io 6 2019-09-22 09:33:16 some avg10=3.70 avg60=0.92 avg300=0.43 total=160097990
+full avg10=0.08 avg60=0.27 avg300=0.29 total=135380792
+
+/proc/pressure/cpu 6 2019-09-22 09:33:16 some avg10=3.62 avg60=0.65 avg300=0.13 total=65098513
+
+/proc/pressure/io 7 2019-09-22 09:33:16 some avg10=8.64 avg60=1.91 avg300=0.64 total=160229988
+full avg10=0.06 avg60=0.26 avg300=0.29 total=135381640
+
+/proc/pressure/cpu 7 2019-09-22 09:33:16 some avg10=20.90 avg60=3.87 avg300=0.81 total=65616757
+
+/proc/pressure/io 8 2019-09-22 09:33:17 some avg10=8.64 avg60=1.91 avg300=0.64 total=160359771
+full avg10=0.06 avg60=0.26 avg300=0.29 total=135381970
+
+/proc/pressure/cpu 8 2019-09-22 09:33:17 some avg10=20.90 avg60=3.87 avg300=0.81 total=66132511
+
+/proc/pressure/io 9 2019-09-22 09:33:17 some avg10=8.64 avg60=1.91 avg300=0.64 total=160507817
+full avg10=0.06 avg60=0.26 avg300=0.29 total=135383016
+
+/proc/pressure/cpu 9 2019-09-22 09:33:17 some avg10=20.90 avg60=3.87 avg300=0.81 total=66647556
+
+/proc/pressure/io 10 2019-09-22 09:33:18 some avg10=8.64 avg60=1.91 avg300=0.64 total=160694537
+full avg10=0.06 avg60=0.26 avg300=0.29 total=135383086
+
+/proc/pressure/cpu 10 2019-09-22 09:33:18 some avg10=20.90 avg60=3.87 avg300=0.81 total=67164951
+
+/proc/pressure/io 11 2019-09-22 09:33:18 some avg10=12.15 avg60=2.76 avg300=0.83 total=160832643
+full avg10=0.05 avg60=0.25 avg300=0.29 total=135384527
+
+/proc/pressure/cpu 11 2019-09-22 09:33:18 some avg10=35.04 avg60=6.98 avg300=1.48 total=67680691
+
+/proc/pressure/io 12 2019-09-22 09:33:19 some avg10=12.15 avg60=2.76 avg300=0.83 total=160963876
+full avg10=0.05 avg60=0.25 avg300=0.29 total=135384750
+
+/proc/pressure/cpu 12 2019-09-22 09:33:19 some avg10=35.04 avg60=6.98 avg300=1.48 total=68197218
+
+/proc/pressure/io 13 2019-09-22 09:33:19 some avg10=12.15 avg60=2.76 avg300=0.83 total=161116583
+full avg10=0.05 avg60=0.25 avg300=0.29 total=135385265
+
+/proc/pressure/cpu 13 2019-09-22 09:33:19 some avg10=35.04 avg60=6.98 avg300=1.48 total=68713040
+
+/proc/pressure/io 14 2019-09-22 09:33:20 some avg10=12.15 avg60=2.76 avg300=0.83 total=161272492
+full avg10=0.05 avg60=0.25 avg300=0.29 total=135385265
+
+/proc/pressure/cpu 14 2019-09-22 09:33:20 some avg10=35.04 avg60=6.98 avg300=1.48 total=69230658
+
+/proc/pressure/io 15 2019-09-22 09:33:20 some avg10=15.02 avg60=3.59 avg300=1.01 total=161403712
+full avg10=0.04 avg60=0.24 avg300=0.29 total=135385824
+
+/proc/pressure/cpu 15 2019-09-22 09:33:20 some avg10=46.63 avg60=9.99 avg300=2.15 total=69747485
+
+/proc/pressure/io 16 2019-09-22 09:33:21 some avg10=15.02 avg60=3.59 avg300=1.01 total=161534721
+full avg10=0.04 avg60=0.24 avg300=0.29 total=135387247
+
+/proc/pressure/cpu 16 2019-09-22 09:33:21 some avg10=46.63 avg60=9.99 avg300=2.15 total=70263079
+
+/proc/pressure/io 17 2019-09-22 09:33:21 some avg10=15.02 avg60=3.59 avg300=1.01 total=161668123
+full avg10=0.04 avg60=0.24 avg300=0.29 total=135387377
+
+/proc/pressure/cpu 17 2019-09-22 09:33:21 some avg10=46.63 avg60=9.99 avg300=2.15 total=70779930
+
+/proc/pressure/io 18 2019-09-22 09:33:22 some avg10=15.02 avg60=3.59 avg300=1.01 total=161799032
+full avg10=0.04 avg60=0.24 avg300=0.29 total=135387635
+
+/proc/pressure/cpu 18 2019-09-22 09:33:22 some avg10=46.63 avg60=9.99 avg300=2.15 total=71298031
+
+/proc/pressure/io 19 2019-09-22 09:33:22 some avg10=16.83 avg60=4.29 avg300=1.18 total=161929541
+full avg10=0.03 avg60=0.23 avg300=0.28 total=135388834
+
+/proc/pressure/cpu 19 2019-09-22 09:33:22 some avg10=56.12 avg60=12.90 avg300=2.81 total=71813990
+
+/proc/pressure/io 20 2019-09-22 09:33:23 some avg10=16.83 avg60=4.29 avg300=1.18 total=162059572
+full avg10=0.03 avg60=0.23 avg300=0.28 total=135389336
+
+/proc/pressure/cpu 20 2019-09-22 09:33:23 some avg10=56.12 avg60=12.90 avg300=2.81 total=72330269
+
+/proc/pressure/io 21 2019-09-22 09:33:23 some avg10=16.83 avg60=4.29 avg300=1.18 total=162193691
+full avg10=0.03 avg60=0.23 avg300=0.28 total=135389684
+
+/proc/pressure/cpu 21 2019-09-22 09:33:23 some avg10=56.12 avg60=12.90 avg300=2.81 total=72827383
+
+/proc/pressure/io 22 2019-09-22 09:33:24 some avg10=18.31 avg60=4.96 avg300=1.34 total=162325003
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135391200
+
+/proc/pressure/cpu 22 2019-09-22 09:33:24 some avg10=63.70 avg60=15.69 avg300=3.46 total=73343474
+
+/proc/pressure/io 23 2019-09-22 09:33:24 some avg10=18.31 avg60=4.96 avg300=1.34 total=162456741
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135391930
+
+/proc/pressure/cpu 23 2019-09-22 09:33:24 some avg10=63.70 avg60=15.69 avg300=3.46 total=73860340
+
+/proc/pressure/io 24 2019-09-22 09:33:25 some avg10=18.31 avg60=4.96 avg300=1.34 total=162587473
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135392951
+
+/proc/pressure/cpu 24 2019-09-22 09:33:25 some avg10=63.70 avg60=15.69 avg300=3.46 total=74375279
+
+/proc/pressure/io 25 2019-09-22 09:33:25 some avg10=18.31 avg60=4.96 avg300=1.34 total=162778273
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135394865
+
+/proc/pressure/cpu 25 2019-09-22 09:33:26 some avg10=63.70 avg60=15.69 avg300=3.46 total=74889567
+
+/proc/pressure/io 26 2019-09-22 09:33:26 some avg10=20.06 avg60=5.72 avg300=1.52 total=162909035
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135395440
+
+/proc/pressure/cpu 26 2019-09-22 09:33:26 some avg10=70.10 avg60=18.41 avg300=4.11 total=75406461
+
+/proc/pressure/io 27 2019-09-22 09:33:27 some avg10=20.06 avg60=5.72 avg300=1.52 total=163048882
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135395745
+
+/proc/pressure/cpu 27 2019-09-22 09:33:27 some avg10=70.10 avg60=18.41 avg300=4.11 total=75923429
+
+/proc/pressure/io 28 2019-09-22 09:33:27 some avg10=20.06 avg60=5.72 avg300=1.52 total=163178856
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135396910
+
+/proc/pressure/cpu 28 2019-09-22 09:33:27 some avg10=70.10 avg60=18.41 avg300=4.11 total=76439680
+
+/proc/pressure/io 29 2019-09-22 09:33:28 some avg10=20.06 avg60=5.72 avg300=1.52 total=163321590
+full avg10=0.02 avg60=0.22 avg300=0.28 total=135397928
+
+/proc/pressure/cpu 29 2019-09-22 09:33:28 some avg10=70.10 avg60=18.41 avg300=4.11 total=76955102
+
+/proc/pressure/io 30 2019-09-22 09:33:28 some avg10=21.50 avg60=6.45 avg300=1.70 total=163502579
+full avg10=0.01 avg60=0.21 avg300=0.28 total=135398008
+
+/proc/pressure/cpu 30 2019-09-22 09:33:28 some avg10=75.33 avg60=21.05 avg300=4.76 total=77470030
+
+/proc/pressure/io 31 2019-09-22 09:33:29 some avg10=21.50 avg60=6.45 avg300=1.70 total=163633744
+full avg10=0.01 avg60=0.21 avg300=0.28 total=135399369
+
+/proc/pressure/cpu 31 2019-09-22 09:33:29 some avg10=75.33 avg60=21.05 avg300=4.76 total=77985859
+
+/proc/pressure/io 32 2019-09-22 09:33:29 some avg10=21.50 avg60=6.45 avg300=1.70 total=163774737
+full avg10=0.01 avg60=0.21 avg300=0.28 total=135399510
+
+/proc/pressure/cpu 32 2019-09-22 09:33:29 some avg10=75.33 avg60=21.05 avg300=4.76 total=78502304
+
+/proc/pressure/io 33 2019-09-22 09:33:30 some avg10=21.50 avg60=6.45 avg300=1.70 total=163906698
+full avg10=0.01 avg60=0.21 avg300=0.28 total=135399866
+
+/proc/pressure/cpu 33 2019-09-22 09:33:30 some avg10=75.33 avg60=21.05 avg300=4.76 total=79018856
+
+/proc/pressure/io 34 2019-09-22 09:33:30 some avg10=22.13 avg60=7.05 avg300=1.86 total=164036663
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135399969
+
+/proc/pressure/cpu 34 2019-09-22 09:33:30 some avg10=79.62 avg60=23.60 avg300=5.41 total=79534193
+
+/proc/pressure/io 35 2019-09-22 09:33:31 some avg10=22.13 avg60=7.05 avg300=1.86 total=164166400
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135400699
+
+/proc/pressure/cpu 35 2019-09-22 09:33:31 some avg10=79.62 avg60=23.60 avg300=5.41 total=80049418
+
+/proc/pressure/io 36 2019-09-22 09:33:31 some avg10=22.13 avg60=7.05 avg300=1.86 total=164297614
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135401602
+
+/proc/pressure/cpu 36 2019-09-22 09:33:31 some avg10=79.62 avg60=23.60 avg300=5.41 total=80565434
+
+/proc/pressure/io 37 2019-09-22 09:33:32 some avg10=22.13 avg60=7.05 avg300=1.86 total=164434341
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135403190
+
+/proc/pressure/cpu 37 2019-09-22 09:33:32 some avg10=79.62 avg60=23.60 avg300=5.41 total=81081073
+
+/proc/pressure/io 38 2019-09-22 09:33:32 some avg10=22.83 avg60=7.67 avg300=2.03 total=164578504
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135404461
+
+/proc/pressure/cpu 38 2019-09-22 09:33:32 some avg10=83.13 avg60=26.07 avg300=6.05 total=81597962
+
+/proc/pressure/io 39 2019-09-22 09:33:33 some avg10=22.83 avg60=7.67 avg300=2.03 total=164709577
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135404752
+
+/proc/pressure/cpu 39 2019-09-22 09:33:33 some avg10=83.13 avg60=26.07 avg300=6.05 total=82113524
+
+/proc/pressure/io 40 2019-09-22 09:33:33 some avg10=22.83 avg60=7.67 avg300=2.03 total=164859299
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135405033
+
+/proc/pressure/cpu 40 2019-09-22 09:33:33 some avg10=83.13 avg60=26.07 avg300=6.05 total=82594490
+
+/proc/pressure/io 41 2019-09-22 09:33:34 some avg10=22.83 avg60=7.67 avg300=2.03 total=164989600
+full avg10=0.01 avg60=0.20 avg300=0.27 total=135406693
+
+/proc/pressure/cpu 41 2019-09-22 09:33:34 some avg10=83.13 avg60=26.07 avg300=6.05 total=83109306
+
+/proc/pressure/io 42 2019-09-22 09:33:34 some avg10=23.41 avg60=8.27 avg300=2.19 total=165119634
+full avg10=0.00 avg60=0.19 avg300=0.27 total=135407194
+
+/proc/pressure/cpu 42 2019-09-22 09:33:34 some avg10=85.82 avg60=28.42 avg300=6.68 total=83625671
+
+/proc/pressure/io 43 2019-09-22 09:33:35 some avg10=23.41 avg60=8.27 avg300=2.19 total=165254304
+full avg10=0.00 avg60=0.19 avg300=0.27 total=135407397
+
+/proc/pressure/cpu 43 2019-09-22 09:33:35 some avg10=85.82 avg60=28.42 avg300=6.68 total=84142780
+
+/proc/pressure/io 44 2019-09-22 09:33:35 some avg10=23.41 avg60=8.27 avg300=2.19 total=165384687
+full avg10=0.00 avg60=0.19 avg300=0.27 total=135407842
+
+/proc/pressure/cpu 44 2019-09-22 09:33:35 some avg10=85.82 avg60=28.42 avg300=6.68 total=84657848
+
+/proc/pressure/io 45 2019-09-22 09:33:36 some avg10=23.41 avg60=8.27 avg300=2.19 total=165514076
+full avg10=0.00 avg60=0.19 avg300=0.27 total=135408098
+
+/proc/pressure/cpu 45 2019-09-22 09:33:36 some avg10=85.82 avg60=28.42 avg300=6.68 total=85172677
+
+/proc/pressure/io 46 2019-09-22 09:33:36 some avg10=23.69 avg60=8.82 avg300=2.35 total=165644820
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135409217
+
+/proc/pressure/cpu 46 2019-09-22 09:33:36 some avg10=88.21 avg60=30.73 avg300=7.31 total=85688837
+
+/proc/pressure/io 47 2019-09-22 09:33:37 some avg10=23.69 avg60=8.82 avg300=2.35 total=165775634
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135409876
+
+/proc/pressure/cpu 47 2019-09-22 09:33:37 some avg10=88.21 avg60=30.73 avg300=7.31 total=86205503
+
+/proc/pressure/io 48 2019-09-22 09:33:37 some avg10=23.69 avg60=8.82 avg300=2.35 total=165905690
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135409876
+
+/proc/pressure/cpu 48 2019-09-22 09:33:37 some avg10=88.21 avg60=30.73 avg300=7.31 total=86724007
+
+/proc/pressure/io 49 2019-09-22 09:33:38 some avg10=23.69 avg60=8.82 avg300=2.35 total=166043631
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135410050
+
+/proc/pressure/cpu 49 2019-09-22 09:33:38 some avg10=90.16 avg60=32.96 avg300=7.93 total=87242411
+
+/proc/pressure/io 50 2019-09-22 09:33:38 some avg10=23.93 avg60=9.35 avg300=2.50 total=166174758
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135411177
+
+/proc/pressure/cpu 50 2019-09-22 09:33:38 some avg10=90.16 avg60=32.96 avg300=7.93 total=87757102
+
+/proc/pressure/io 51 2019-09-22 09:33:39 some avg10=23.93 avg60=9.35 avg300=2.50 total=166304530
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135411937
+
+/proc/pressure/cpu 51 2019-09-22 09:33:39 some avg10=90.16 avg60=32.96 avg300=7.93 total=88273976
+
+/proc/pressure/io 52 2019-09-22 09:33:39 some avg10=23.93 avg60=9.35 avg300=2.50 total=166434987
+full avg10=0.00 avg60=0.18 avg300=0.27 total=135412438
+
+/proc/pressure/cpu 52 2019-09-22 09:33:40 some avg10=90.16 avg60=32.96 avg300=7.93 total=88791353
+
+/proc/pressure/io 53 2019-09-22 09:33:40 some avg10=24.12 avg60=9.86 avg300=2.66 total=166564807
+full avg10=0.00 avg60=0.17 avg300=0.27 total=135412787
+
+/proc/pressure/cpu 53 2019-09-22 09:33:40 some avg10=91.76 avg60=35.12 avg300=8.56 total=89305399
+
+/proc/pressure/io 54 2019-09-22 09:33:40 some avg10=24.12 avg60=9.86 avg300=2.66 total=166695237
+full avg10=0.00 avg60=0.17 avg300=0.27 total=135414444
+
+/proc/pressure/cpu 54 2019-09-22 09:33:41 some avg10=91.76 avg60=35.12 avg300=8.56 total=89820395
+
+/proc/pressure/io 55 2019-09-22 09:33:41 some avg10=24.12 avg60=9.86 avg300=2.66 total=166825448
+full avg10=0.00 avg60=0.17 avg300=0.27 total=135414932
+
+/proc/pressure/cpu 55 2019-09-22 09:33:41 some avg10=91.76 avg60=35.12 avg300=8.56 total=90336419
+
+/proc/pressure/io 56 2019-09-22 09:33:42 some avg10=24.12 avg60=9.86 avg300=2.66 total=166955362
+full avg10=0.00 avg60=0.17 avg300=0.27 total=135415315
+
+/proc/pressure/cpu 56 2019-09-22 09:33:42 some avg10=91.76 avg60=35.12 avg300=8.56 total=90853824
+
+/proc/pressure/io 57 2019-09-22 09:33:42 some avg10=24.28 avg60=10.36 avg300=2.81 total=167085148
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135415585
+
+/proc/pressure/cpu 57 2019-09-22 09:33:42 some avg10=93.07 avg60=37.21 avg300=9.17 total=91368611
+
+/proc/pressure/io 58 2019-09-22 09:33:43 some avg10=24.28 avg60=10.36 avg300=2.81 total=167215292
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135416202
+
+/proc/pressure/cpu 58 2019-09-22 09:33:43 some avg10=93.07 avg60=37.21 avg300=9.17 total=91882390
+
+/proc/pressure/io 59 2019-09-22 09:33:43 some avg10=24.28 avg60=10.36 avg300=2.81 total=167348005
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135417128
+
+/proc/pressure/cpu 59 2019-09-22 09:33:43 some avg10=93.07 avg60=37.21 avg300=9.17 total=92401439
+
+/proc/pressure/io 60 2019-09-22 09:33:44 some avg10=24.28 avg60=10.36 avg300=2.81 total=167477800
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135417328
+
+/proc/pressure/cpu 60 2019-09-22 09:33:44 some avg10=93.07 avg60=37.21 avg300=9.17 total=92914695
+
+/proc/pressure/io 61 2019-09-22 09:33:44 some avg10=24.41 avg60=10.84 avg300=2.96 total=167608253
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135418308
+
+/proc/pressure/cpu 61 2019-09-22 09:33:44 some avg10=94.15 avg60=39.23 avg300=9.79 total=93430933
+
+/proc/pressure/io 62 2019-09-22 09:33:45 some avg10=24.41 avg60=10.84 avg300=2.96 total=167738903
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135419385
+
+/proc/pressure/cpu 62 2019-09-22 09:33:45 some avg10=94.15 avg60=39.23 avg300=9.79 total=93946947
+
+/proc/pressure/io 63 2019-09-22 09:33:45 some avg10=24.41 avg60=10.84 avg300=2.96 total=167869097
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135419674
+
+/proc/pressure/cpu 63 2019-09-22 09:33:45 some avg10=94.15 avg60=39.23 avg300=9.79 total=94464457
+
+/proc/pressure/io 64 2019-09-22 09:33:46 some avg10=24.41 avg60=10.84 avg300=2.96 total=167999098
+full avg10=0.00 avg60=0.16 avg300=0.26 total=135420376
+
+/proc/pressure/cpu 64 2019-09-22 09:33:46 some avg10=94.15 avg60=39.23 avg300=9.79 total=94981217
+
+/proc/pressure/io 65 2019-09-22 09:33:46 some avg10=24.52 avg60=11.30 avg300=3.11 total=168134996
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135421239
+
+/proc/pressure/cpu 65 2019-09-22 09:33:46 some avg10=95.02 avg60=41.19 avg300=10.40 total=95496632
+
+/proc/pressure/io 66 2019-09-22 09:33:47 some avg10=24.52 avg60=11.30 avg300=3.11 total=168264716
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135421723
+
+/proc/pressure/cpu 66 2019-09-22 09:33:47 some avg10=95.02 avg60=41.19 avg300=10.40 total=96010662
+
+/proc/pressure/io 67 2019-09-22 09:33:47 some avg10=24.52 avg60=11.30 avg300=3.11 total=168394713
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135422069
+
+/proc/pressure/cpu 67 2019-09-22 09:33:47 some avg10=95.02 avg60=41.19 avg300=10.40 total=96528882
+
+/proc/pressure/io 68 2019-09-22 09:33:48 some avg10=24.52 avg60=11.30 avg300=3.11 total=168524733
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135422562
+
+/proc/pressure/cpu 68 2019-09-22 09:33:48 some avg10=95.02 avg60=41.19 avg300=10.40 total=97045739
+
+/proc/pressure/io 69 2019-09-22 09:33:48 some avg10=24.60 avg60=11.75 avg300=3.26 total=168655385
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135423488
+
+/proc/pressure/cpu 69 2019-09-22 09:33:48 some avg10=95.74 avg60=43.08 avg300=11.00 total=97562794
+
+/proc/pressure/io 70 2019-09-22 09:33:49 some avg10=24.60 avg60=11.75 avg300=3.26 total=168786791
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135425233
+
+/proc/pressure/cpu 70 2019-09-22 09:33:49 some avg10=95.74 avg60=43.08 avg300=11.00 total=98076750
+
+/proc/pressure/io 71 2019-09-22 09:33:49 some avg10=24.60 avg60=11.75 avg300=3.26 total=168917162
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135425690
+
+/proc/pressure/cpu 71 2019-09-22 09:33:49 some avg10=95.74 avg60=43.08 avg300=11.00 total=98592216
+
+/proc/pressure/io 72 2019-09-22 09:33:50 some avg10=24.60 avg60=11.75 avg300=3.26 total=169048046
+full avg10=0.00 avg60=0.15 avg300=0.26 total=135426146
+
+/proc/pressure/cpu 72 2019-09-22 09:33:50 some avg10=95.74 avg60=43.08 avg300=11.00 total=99109593
+
+/proc/pressure/io 73 2019-09-22 09:33:50 some avg10=24.68 avg60=12.18 avg300=3.41 total=169178488
+full avg10=0.00 avg60=0.14 avg300=0.26 total=135426824
+
+/proc/pressure/cpu 73 2019-09-22 09:33:50 some avg10=96.33 avg60=44.91 avg300=11.61 total=99625629
+
+/proc/pressure/io 74 2019-09-22 09:33:51 some avg10=24.68 avg60=12.18 avg300=3.41 total=169308660
+full avg10=0.00 avg60=0.14 avg300=0.26 total=135427805
+
+/proc/pressure/cpu 74 2019-09-22 09:33:51 some avg10=96.33 avg60=44.91 avg300=11.61 total=100140307
+
+/proc/pressure/io 75 2019-09-22 09:33:51 some avg10=24.68 avg60=12.18 avg300=3.41 total=169466027
+full avg10=0.00 avg60=0.14 avg300=0.26 total=135429183
+
+/proc/pressure/cpu 75 2019-09-22 09:33:51 some avg10=96.33 avg60=44.91 avg300=11.61 total=100655965
+
+/proc/pressure/io 76 2019-09-22 09:33:52 some avg10=24.68 avg60=12.18 avg300=3.41 total=169596264
+full avg10=0.00 avg60=0.14 avg300=0.26 total=135430483
+
+/proc/pressure/cpu 76 2019-09-22 09:33:52 some avg10=96.82 avg60=46.68 avg300=12.20 total=101170689
+
+/proc/pressure/io 77 2019-09-22 09:33:52 some avg10=24.91 avg60=12.63 avg300=3.57 total=169738295
+full avg10=0.00 avg60=0.14 avg300=0.25 total=135431855
+
+/proc/pressure/cpu 77 2019-09-22 09:33:52 some avg10=96.82 avg60=46.68 avg300=12.20 total=101686376
+
+/proc/pressure/io 78 2019-09-22 09:33:53 some avg10=24.91 avg60=12.63 avg300=3.57 total=169868909
+full avg10=0.00 avg60=0.14 avg300=0.25 total=135432722
+
+/proc/pressure/cpu 78 2019-09-22 09:33:53 some avg10=96.82 avg60=46.68 avg300=12.20 total=102201376
+
+/proc/pressure/io 79 2019-09-22 09:33:53 some avg10=24.91 avg60=12.63 avg300=3.57 total=170001235
+full avg10=0.00 avg60=0.14 avg300=0.25 total=135432872
+
+/proc/pressure/cpu 79 2019-09-22 09:33:53 some avg10=96.82 avg60=46.68 avg300=12.20 total=102718141
+
+/proc/pressure/io 80 2019-09-22 09:33:54 some avg10=24.93 avg60=13.04 avg300=3.71 total=170130825
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135433679
+
+/proc/pressure/cpu 80 2019-09-22 09:33:54 some avg10=97.21 avg60=48.39 avg300=12.80 total=103232842
+
+/proc/pressure/io 81 2019-09-22 09:33:54 some avg10=24.93 avg60=13.04 avg300=3.71 total=170268268
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135433679
+
+/proc/pressure/cpu 81 2019-09-22 09:33:55 some avg10=97.21 avg60=48.39 avg300=12.80 total=103735041
+
+/proc/pressure/io 82 2019-09-22 09:33:55 some avg10=24.93 avg60=13.04 avg300=3.71 total=170398961
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135434042
+
+/proc/pressure/cpu 82 2019-09-22 09:33:55 some avg10=97.21 avg60=48.39 avg300=12.80 total=104251243
+
+/proc/pressure/io 83 2019-09-22 09:33:56 some avg10=24.93 avg60=13.04 avg300=3.71 total=170529657
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135435132
+
+/proc/pressure/cpu 83 2019-09-22 09:33:56 some avg10=97.21 avg60=48.39 avg300=12.80 total=104768376
+
+/proc/pressure/io 84 2019-09-22 09:33:56 some avg10=24.94 avg60=13.43 avg300=3.86 total=170669221
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135435919
+
+/proc/pressure/cpu 84 2019-09-22 09:33:56 some avg10=97.35 avg60=50.01 avg300=13.38 total=105285007
+
+/proc/pressure/io 85 2019-09-22 09:33:57 some avg10=24.94 avg60=13.43 avg300=3.86 total=170799992
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135437247
+
+/proc/pressure/cpu 85 2019-09-22 09:33:57 some avg10=97.35 avg60=50.01 avg300=13.38 total=105799957
+
+/proc/pressure/io 86 2019-09-22 09:33:57 some avg10=24.94 avg60=13.43 avg300=3.86 total=170930530
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135438545
+
+/proc/pressure/cpu 86 2019-09-22 09:33:57 some avg10=97.35 avg60=50.01 avg300=13.38 total=106314327
+
+/proc/pressure/io 87 2019-09-22 09:33:58 some avg10=24.94 avg60=13.43 avg300=3.86 total=171060817
+full avg10=0.00 avg60=0.13 avg300=0.25 total=135438895
+
+/proc/pressure/cpu 87 2019-09-22 09:33:58 some avg10=97.35 avg60=50.01 avg300=13.38 total=106829509
+
+/proc/pressure/io 88 2019-09-22 09:33:58 some avg10=24.95 avg60=13.81 avg300=4.00 total=171190878
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135440010
+
+/proc/pressure/cpu 88 2019-09-22 09:33:58 some avg10=97.65 avg60=51.62 avg300=13.97 total=107345988
+
+/proc/pressure/io 89 2019-09-22 09:33:59 some avg10=24.95 avg60=13.81 avg300=4.00 total=171320669
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135440499
+
+/proc/pressure/cpu 89 2019-09-22 09:33:59 some avg10=97.65 avg60=51.62 avg300=13.97 total=107861231
+
+/proc/pressure/io 90 2019-09-22 09:33:59 some avg10=24.95 avg60=13.81 avg300=4.00 total=171452199
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135442585
+
+/proc/pressure/cpu 90 2019-09-22 09:33:59 some avg10=97.65 avg60=51.62 avg300=13.97 total=108376514
+
+/proc/pressure/io 91 2019-09-22 09:34:00 some avg10=24.95 avg60=13.81 avg300=4.00 total=171583032
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135444117
+
+/proc/pressure/cpu 91 2019-09-22 09:34:00 some avg10=97.65 avg60=51.62 avg300=13.97 total=108893671
+
+/proc/pressure/io 92 2019-09-22 09:34:00 some avg10=24.96 avg60=14.17 avg300=4.15 total=171714487
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135445019
+
+/proc/pressure/cpu 92 2019-09-22 09:34:00 some avg10=97.89 avg60=53.17 avg300=14.55 total=109408916
+
+/proc/pressure/io 93 2019-09-22 09:34:01 some avg10=24.96 avg60=14.17 avg300=4.15 total=171845554
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135445948
+
+/proc/pressure/cpu 93 2019-09-22 09:34:01 some avg10=97.89 avg60=53.17 avg300=14.55 total=109924506
+
+/proc/pressure/io 94 2019-09-22 09:34:01 some avg10=24.96 avg60=14.17 avg300=4.15 total=171990444
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135446251
+
+/proc/pressure/cpu 94 2019-09-22 09:34:01 some avg10=97.89 avg60=53.17 avg300=14.55 total=110440683
+
+/proc/pressure/io 95 2019-09-22 09:34:02 some avg10=24.96 avg60=14.17 avg300=4.15 total=172153964
+full avg10=0.00 avg60=0.12 avg300=0.25 total=135448005
+
+/proc/pressure/cpu 95 2019-09-22 09:34:02 some avg10=97.89 avg60=53.17 avg300=14.55 total=110955089
+
+/proc/pressure/io 96 2019-09-22 09:34:02 some avg10=25.33 avg60=14.59 avg300=4.30 total=172311014
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135448758
+
+/proc/pressure/cpu 96 2019-09-22 09:34:02 some avg10=98.09 avg60=54.67 avg300=15.12 total=111470874
+
+/proc/pressure/io 97 2019-09-22 09:34:03 some avg10=25.33 avg60=14.59 avg300=4.30 total=172442081
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135449324
+
+/proc/pressure/cpu 97 2019-09-22 09:34:03 some avg10=98.09 avg60=54.67 avg300=15.12 total=111987789
+
+/proc/pressure/io 98 2019-09-22 09:34:03 some avg10=25.33 avg60=14.59 avg300=4.30 total=172591495
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135449324
+
+/proc/pressure/cpu 98 2019-09-22 09:34:03 some avg10=98.09 avg60=54.67 avg300=15.12 total=112505767
+
+/proc/pressure/io 99 2019-09-22 09:34:04 some avg10=25.33 avg60=14.59 avg300=4.30 total=172726065
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135449662
+
+/proc/pressure/cpu 99 2019-09-22 09:34:04 some avg10=98.09 avg60=54.67 avg300=15.12 total=113022387
+
+/proc/pressure/io 100 2019-09-22 09:34:04 some avg10=25.63 avg60=15.00 avg300=4.46 total=172856500
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135451530
+
+/proc/pressure/cpu 100 2019-09-22 09:34:04 some avg10=98.26 avg60=56.12 avg300=15.70 total=113536908
+
+/proc/pressure/io 101 2019-09-22 09:34:05 some avg10=25.63 avg60=15.00 avg300=4.46 total=173034625
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135452833
+
+/proc/pressure/cpu 101 2019-09-22 09:34:05 some avg10=98.26 avg60=56.12 avg300=15.70 total=114050799
+
+/proc/pressure/io 102 2019-09-22 09:34:05 some avg10=25.63 avg60=15.00 avg300=4.46 total=173178508
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135452882
+
+/proc/pressure/cpu 102 2019-09-22 09:34:05 some avg10=98.26 avg60=56.12 avg300=15.70 total=114565816
+
+/proc/pressure/io 103 2019-09-22 09:34:06 some avg10=25.63 avg60=15.00 avg300=4.46 total=173308567
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135454753
+
+/proc/pressure/cpu 103 2019-09-22 09:34:06 some avg10=98.39 avg60=57.52 avg300=16.27 total=115081006
+
+/proc/pressure/io 104 2019-09-22 09:34:06 some avg10=26.06 avg60=15.43 avg300=4.62 total=173438486
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135454849
+
+/proc/pressure/cpu 104 2019-09-22 09:34:06 some avg10=98.39 avg60=57.52 avg300=16.27 total=115598703
+
+/proc/pressure/io 105 2019-09-22 09:34:07 some avg10=26.06 avg60=15.43 avg300=4.62 total=173582452
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135455760
+
+/proc/pressure/cpu 105 2019-09-22 09:34:07 some avg10=98.39 avg60=57.52 avg300=16.27 total=116115409
+
+/proc/pressure/io 106 2019-09-22 09:34:07 some avg10=26.06 avg60=15.43 avg300=4.62 total=173714154
+full avg10=0.00 avg60=0.11 avg300=0.24 total=135455858
+
+/proc/pressure/cpu 106 2019-09-22 09:34:07 some avg10=98.39 avg60=57.52 avg300=16.27 total=116633221
+
+/proc/pressure/io 107 2019-09-22 09:34:08 some avg10=25.87 avg60=15.74 avg300=4.76 total=173844877
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135457786
+
+/proc/pressure/cpu 107 2019-09-22 09:34:08 some avg10=98.50 avg60=58.88 avg300=16.83 total=117148731
+
+/proc/pressure/io 108 2019-09-22 09:34:08 some avg10=25.87 avg60=15.74 avg300=4.76 total=173975494
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135458766
+
+/proc/pressure/cpu 108 2019-09-22 09:34:09 some avg10=98.50 avg60=58.88 avg300=16.83 total=117665538
+
+/proc/pressure/io 109 2019-09-22 09:34:09 some avg10=25.87 avg60=15.74 avg300=4.76 total=174179024
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135459220
+
+/proc/pressure/cpu 109 2019-09-22 09:34:09 some avg10=98.50 avg60=58.88 avg300=16.83 total=118177478
+
+/proc/pressure/io 110 2019-09-22 09:34:10 some avg10=25.87 avg60=15.74 avg300=4.76 total=174309049
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135460311
+
+/proc/pressure/cpu 110 2019-09-22 09:34:10 some avg10=98.50 avg60=58.88 avg300=16.83 total=118693842
+
+/proc/pressure/io 111 2019-09-22 09:34:10 some avg10=26.25 avg60=16.14 avg300=4.92 total=174439300
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135460311
+
+/proc/pressure/cpu 111 2019-09-22 09:34:10 some avg10=98.59 avg60=60.19 avg300=17.40 total=119209162
+
+/proc/pressure/io 112 2019-09-22 09:34:11 some avg10=26.25 avg60=16.14 avg300=4.92 total=174568861
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135461803
+
+/proc/pressure/cpu 112 2019-09-22 09:34:11 some avg10=98.59 avg60=60.19 avg300=17.40 total=119724883
+
+/proc/pressure/io 113 2019-09-22 09:34:11 some avg10=26.25 avg60=16.14 avg300=4.92 total=174701772
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135462432
+
+/proc/pressure/cpu 113 2019-09-22 09:34:11 some avg10=98.59 avg60=60.19 avg300=17.40 total=120239479
+
+/proc/pressure/io 114 2019-09-22 09:34:12 some avg10=26.25 avg60=16.14 avg300=4.92 total=174881080
+full avg10=0.00 avg60=0.10 avg300=0.24 total=135464470
+
+/proc/pressure/cpu 114 2019-09-22 09:34:12 some avg10=98.59 avg60=60.19 avg300=17.40 total=120755626
+
+/proc/pressure/io 115 2019-09-22 09:34:12 some avg10=26.57 avg60=16.53 avg300=5.08 total=175037177
+full avg10=0.00 avg60=0.09 avg300=0.23 total=135464812
+
+/proc/pressure/cpu 115 2019-09-22 09:34:12 some avg10=98.66 avg60=61.46 avg300=17.95 total=121272351
+
+/proc/pressure/io 116 2019-09-22 09:34:13 some avg10=26.57 avg60=16.53 avg300=5.08 total=175167722
+full avg10=0.00 avg60=0.09 avg300=0.23 total=135465210
+
+/proc/pressure/cpu 116 2019-09-22 09:34:13 some avg10=98.66 avg60=61.46 avg300=17.95 total=121788120
+
+/proc/pressure/io 117 2019-09-22 09:34:13 some avg10=26.57 avg60=16.53 avg300=5.08 total=175317649
+full avg10=0.00 avg60=0.09 avg300=0.23 total=135465489
+
+/proc/pressure/cpu 117 2019-09-22 09:34:13 some avg10=98.66 avg60=61.46 avg300=17.95 total=122295233
+
+/proc/pressure/io 118 2019-09-22 09:34:28 some avg10=6.21 avg60=13.16 avg300=4.93 total=175448784
+full avg10=0.00 avg60=0.07 avg300=0.22 total=135523655
+
+/proc/pressure/io 119 2019-09-22 09:37:28 some avg10=0.09 avg60=0.83 avg300=2.74 total=176078524
+full avg10=0.09 avg60=0.17 avg300=0.20 total=136153012
+
+/proc/pressure/io 120 2019-09-22 09:37:30 some avg10=0.09 avg60=0.83 avg300=2.74 total=176079091
+full avg10=0.09 avg60=0.17 avg300=0.20 total=136153579
+
+/proc/pressure/io 121 2019-09-22 09:37:55 some avg10=0.16 avg60=0.61 avg300=2.52 total=176219104
+full avg10=0.16 avg60=0.18 avg300=0.20 total=136293556
+
+/proc/pressure/io 122 2019-09-22 09:40:58 some avg10=0.06 avg60=0.21 avg300=1.44 total=176845636
+full avg10=0.06 avg60=0.18 avg300=0.20 total=136918574
+
+/proc/pressure/io 123 2019-09-22 09:44:48 some avg10=0.14 avg60=0.18 avg300=0.75 total=177587940
+full avg10=0.14 avg60=0.18 avg300=0.20 total=137659818
+
+/proc/pressure/io 124 2019-09-22 09:46:38 some avg10=0.13 avg60=0.18 avg300=0.58 total=177979966
+full avg10=0.13 avg60=0.18 avg300=0.20 total=138051732
+
+/proc/pressure/io 125 2019-09-22 09:47:58 some avg10=0.11 avg60=0.14 avg300=0.47 total=178198732
+full avg10=0.11 avg60=0.14 avg300=0.19 total=138270410
+
+/proc/pressure/io 126 2019-09-22 09:50:49 some avg10=0.10 avg60=0.19 avg300=0.35 total=178724913
+full avg10=0.10 avg60=0.19 avg300=0.20 total=138795054
+
+/proc/pressure/io 127 2019-09-22 09:50:58 some avg10=0.34 avg60=0.25 avg300=0.35 total=178785897
+full avg10=0.34 avg60=0.25 avg300=0.21 total=138855849
+
+/proc/pressure/io 128 2019-09-22 09:51:58 some avg10=0.14 avg60=0.22 avg300=0.33 total=179001863
+full avg10=0.14 avg60=0.22 avg300=0.21 total=139071611
+
+/proc/pressure/io 129 2019-09-22 09:52:09 some avg10=0.54 avg60=0.30 avg300=0.34 total=179058957
+full avg10=0.54 avg60=0.30 avg300=0.22 total=139128690
+
+/proc/pressure/io 130 2019-09-22 09:54:08 some avg10=0.14 avg60=0.18 avg300=0.27 total=179452686
+full avg10=0.14 avg60=0.18 avg300=0.20 total=139522118
+
+/proc/pressure/io 131 2019-09-22 09:56:18 some avg10=0.12 avg60=0.18 avg300=0.25 total=179867173
+full avg10=0.12 avg60=0.18 avg300=0.20 total=139931757
+
+/proc/pressure/io 132 2019-09-22 09:59:59 some avg10=0.12 avg60=0.17 avg300=0.20 total=180502799
+full avg10=0.12 avg60=0.17 avg300=0.18 total=140566723
+
+/proc/pressure/io 133 2019-09-22 10:00:58 some avg10=0.10 avg60=0.19 avg300=0.20 total=180739844
+full avg10=0.10 avg60=0.19 avg300=0.20 total=140801909
+
+/proc/pressure/io 134 2019-09-22 10:02:38 some avg10=0.12 avg60=0.19 avg300=0.20 total=181070485
+full avg10=0.12 avg60=0.19 avg300=0.20 total=141132242
+
+/proc/pressure/io 135 2019-09-22 10:02:49 some avg10=0.29 avg60=0.25 avg300=0.22 total=181128737
+full avg10=0.29 avg60=0.25 avg300=0.21 total=141190480
+
+/proc/pressure/io 136 2019-09-22 10:09:48 some avg10=0.12 avg60=0.17 avg300=0.17 total=182252859
+full avg10=0.12 avg60=0.17 avg300=0.17 total=142313947
+
+/proc/pressure/io 137 2019-09-22 10:09:49 some avg10=0.64 avg60=0.27 avg300=0.19 total=182257279
+full avg10=0.64 avg60=0.27 avg300=0.19 total=142318366
+
+/proc/pressure/io 138 2019-09-22 10:10:48 some avg10=0.12 avg60=0.20 avg300=0.19 total=182474238
+full avg10=0.12 avg60=0.20 avg300=0.19 total=142534493
+
+/proc/pressure/io 139 2019-09-22 10:10:58 some avg10=0.28 avg60=0.25 avg300=0.20 total=182549323
+full avg10=0.28 avg60=0.25 avg300=0.20 total=142609423
+
+/proc/pressure/io 140 2019-09-22 10:15:48 some avg10=0.12 avg60=0.17 avg300=0.18 total=183403262
+full avg10=0.12 avg60=0.17 avg300=0.18 total=143461891
+
+/proc/pressure/io 141 2019-09-22 10:15:59 some avg10=0.20 avg60=0.20 avg300=0.18 total=183454580
+full avg10=0.20 avg60=0.20 avg300=0.18 total=143513187
+
+/proc/pressure/io 142 2019-09-22 10:20:58 some avg10=0.07 avg60=0.13 avg300=0.15 total=184344448
+full avg10=0.07 avg60=0.13 avg300=0.15 total=144401229
+
+/proc/pressure/io 143 2019-09-22 10:26:39 some avg10=0.12 avg60=0.13 avg300=0.13 total=185320801
+full avg10=0.12 avg60=0.12 avg300=0.13 total=145368795
+
+/proc/pressure/io 144 2019-09-22 10:28:10 some avg10=0.20 avg60=0.14 avg300=0.14 total=185581977
+full avg10=0.20 avg60=0.14 avg300=0.13 total=145629735
+
+/proc/pressure/io 145 2019-09-22 10:28:58 some avg10=0.12 avg60=0.16 avg300=0.14 total=185791817
+full avg10=0.12 avg60=0.16 avg300=0.14 total=145839404
+
+/proc/pressure/io 146 2019-09-22 10:29:38 some avg10=0.14 avg60=0.22 avg300=0.16 total=185948183
+full avg10=0.14 avg60=0.22 avg300=0.16 total=145995140
+
+/proc/pressure/io 147 2019-09-22 10:30:03 some avg10=0.27 avg60=0.27 avg300=0.18 total=186078718
+full avg10=0.27 avg60=0.27 avg300=0.18 total=146125524
+
+/proc/pressure/io 148 2019-09-22 10:30:03 some avg10=0.27 avg60=0.27 avg300=0.18 total=186285875
+full avg10=0.27 avg60=0.27 avg300=0.18 total=146332306
+
+/proc/pressure/io 149 2019-09-22 10:30:28 some avg10=0.34 avg60=0.51 avg300=0.26 total=186415566
+full avg10=0.34 avg60=0.51 avg300=0.26 total=146461973
+
+/proc/pressure/io 150 2019-09-22 10:30:58 some avg10=0.14 avg60=0.40 avg300=0.26 total=186544984
+full avg10=0.14 avg60=0.40 avg300=0.26 total=146591306
+
+/proc/pressure/io 151 2019-09-22 10:32:28 some avg10=0.12 avg60=0.24 avg300=0.25 total=186908911
+full avg10=0.12 avg60=0.24 avg300=0.25 total=146954784
+
+/proc/pressure/io 152 2019-09-22 10:40:58 some avg10=0.09 avg60=0.15 avg300=0.19 total=188626858
+full avg10=0.09 avg60=0.15 avg300=0.19 total=148670641
+
+/proc/pressure/io 153 2019-09-22 10:40:59 some avg10=0.09 avg60=0.15 avg300=0.19 total=188695236
+full avg10=0.09 avg60=0.15 avg300=0.19 total=148738917
+
+/proc/pressure/io 154 2019-09-22 10:43:28 some avg10=0.12 avg60=0.19 avg300=0.20 total=189206876
+full avg10=0.12 avg60=0.19 avg300=0.20 total=149250153
+
+/proc/pressure/io 155 2019-09-22 10:43:38 some avg10=0.20 avg60=0.22 avg300=0.21 total=189272915
+full avg10=0.20 avg60=0.22 avg300=0.21 total=149316160
+
+/proc/pressure/io 156 2019-09-22 10:48:08 some avg10=0.12 avg60=0.18 avg300=0.20 total=190159188
+full avg10=0.12 avg60=0.18 avg300=0.20 total=150201199
+
+/proc/pressure/io 157 2019-09-22 10:49:08 some avg10=0.13 avg60=0.17 avg300=0.20 total=190367410
+full avg10=0.13 avg60=0.17 avg300=0.20 total=150409234
+
+/proc/pressure/io 158 2019-09-22 10:50:36 some avg10=0.17 avg60=0.18 avg300=0.20 total=190691442
+full avg10=0.17 avg60=0.18 avg300=0.20 total=150732721
+
+/proc/pressure/io 159 2019-09-22 10:50:58 some avg10=0.36 avg60=0.25 avg300=0.21 total=190818143
+full avg10=0.36 avg60=0.25 avg300=0.21 total=150859084
+
+/proc/pressure/io 160 2019-09-22 10:58:08 some avg10=0.14 avg60=0.18 avg300=0.20 total=192172719
+full avg10=0.14 avg60=0.18 avg300=0.20 total=152209919
+
+/proc/pressure/io 161 2019-09-22 10:58:19 some avg10=0.17 avg60=0.20 avg300=0.20 total=192227982
+full avg10=0.17 avg60=0.20 avg300=0.20 total=152265174
+
+/proc/pressure/io 162 2019-09-22 10:58:19 some avg10=0.17 avg60=0.20 avg300=0.20 total=192228547
+full avg10=0.17 avg60=0.20 avg300=0.20 total=152265739
+
+/proc/pressure/io 163 2019-09-22 11:00:03 some avg10=0.37 avg60=0.21 avg300=0.20 total=192578334
+full avg10=0.37 avg60=0.21 avg300=0.20 total=152615344
+
+/proc/pressure/io 164 2019-09-22 11:00:04 some avg10=0.37 avg60=0.21 avg300=0.20 total=192753192
+full avg10=0.37 avg60=0.21 avg300=0.20 total=152790044
+
+/proc/pressure/io 165 2019-09-22 11:00:58 some avg10=0.13 avg60=0.35 avg300=0.27 total=192959624
+full avg10=0.13 avg60=0.35 avg300=0.27 total=152996321
+
+/proc/pressure/io 166 2019-09-22 11:04:28 some avg10=0.12 avg60=0.18 avg300=0.23 total=193698257
+full avg10=0.12 avg60=0.18 avg300=0.23 total=153734108
+
+/proc/pressure/io 167 2019-09-22 11:06:18 some avg10=0.17 avg60=0.21 avg300=0.21 total=194058754
+full avg10=0.17 avg60=0.21 avg300=0.21 total=154094202
+
+/proc/pressure/io 168 2019-09-22 11:10:58 some avg10=0.12 avg60=0.16 avg300=0.20 total=194908728
+full avg10=0.12 avg60=0.16 avg300=0.20 total=154943247
+
+/proc/pressure/io 169 2019-09-22 11:16:38 some avg10=0.12 avg60=0.18 avg300=0.18 total=195906019
+full avg10=0.12 avg60=0.18 avg300=0.18 total=155938623
+
+/proc/pressure/io 170 2019-09-22 11:20:58 some avg10=0.27 avg60=0.22 avg300=0.19 total=196745238
+full avg10=0.27 avg60=0.22 avg300=0.19 total=156776112
+
+/proc/pressure/io 171 2019-09-22 11:25:06 some avg10=0.15 avg60=0.18 avg300=0.20 total=197508060
+full avg10=0.15 avg60=0.18 avg300=0.20 total=157535602
+
+/proc/pressure/io 172 2019-09-22 11:26:08 some avg10=0.04 avg60=0.17 avg300=0.20 total=197731542
+full avg10=0.04 avg60=0.17 avg300=0.20 total=157758835
+
+/proc/pressure/io 173 2019-09-22 11:30:58 some avg10=0.12 avg60=0.16 avg300=0.19 total=198641717
+full avg10=0.12 avg60=0.16 avg300=0.19 total=158662088
+
+/proc/pressure/io 174 2019-09-22 11:31:08 some avg10=0.37 avg60=0.25 avg300=0.21 total=198721640
+full avg10=0.37 avg60=0.25 avg300=0.21 total=158741921
+
+/proc/pressure/io 175 2019-09-22 11:31:40 some avg10=0.06 avg60=0.23 avg300=0.21 total=198797540
+full avg10=0.06 avg60=0.23 avg300=0.21 total=158817815
+
+/proc/pressure/io 176 2019-09-22 11:31:41 some avg10=0.06 avg60=0.23 avg300=0.21 total=198869767
+full avg10=0.06 avg60=0.23 avg300=0.21 total=158889956
+
+/proc/pressure/io 177 2019-09-22 11:31:42 some avg10=3.13 avg60=0.77 avg300=0.33 total=199116184
+full avg10=3.13 avg60=0.77 avg300=0.33 total=159136150
+
+/proc/pressure/io 178 2019-09-22 11:36:58 some avg10=0.12 avg60=0.14 avg300=0.20 total=200069985
+full avg10=0.12 avg60=0.14 avg300=0.20 total=160089453
+
+/proc/pressure/io 179 2019-09-22 11:39:38 some avg10=0.12 avg60=0.16 avg300=0.18 total=200514351
+full avg10=0.12 avg60=0.16 avg300=0.18 total=160533408
+
+/proc/pressure/io 180 2019-09-22 11:40:58 some avg10=0.11 avg60=0.16 avg300=0.18 total=200794828
+full avg10=0.11 avg60=0.16 avg300=0.18 total=160812399
+
+/proc/pressure/io 181 2019-09-22 11:42:58 some avg10=0.12 avg60=0.16 avg300=0.19 total=201185004
+full avg10=0.12 avg60=0.16 avg300=0.19 total=161202232
+
+/proc/pressure/io 182 2019-09-22 11:45:59 some avg10=0.12 avg60=0.16 avg300=0.17 total=201732581
+full avg10=0.12 avg60=0.16 avg300=0.17 total=161749430
+
+/proc/pressure/io 183 2019-09-22 11:46:08 some avg10=0.37 avg60=0.24 avg300=0.19 total=201797055
+full avg10=0.37 avg60=0.24 avg300=0.19 total=161813886
+
+/proc/pressure/io 184 2019-09-22 11:50:58 some avg10=0.16 avg60=0.18 avg300=0.15 total=202605730
+full avg10=0.16 avg60=0.18 avg300=0.15 total=162620201
+
+/proc/pressure/io 185 2019-09-22 11:51:48 some avg10=0.14 avg60=0.23 avg300=0.17 total=202841813
+full avg10=0.14 avg60=0.23 avg300=0.17 total=162856216
+
+/proc/pressure/io 186 2019-09-22 11:55:58 some avg10=0.15 avg60=0.23 avg300=0.21 total=203843279
+full avg10=0.15 avg60=0.22 avg300=0.20 total=163847300
+
+/proc/pressure/io 187 2019-09-22 11:56:08 some avg10=0.31 avg60=0.30 avg300=0.22 total=203903589
+full avg10=0.31 avg60=0.29 avg300=0.22 total=163907572
+
+/proc/pressure/io 188 2019-09-22 11:58:08 some avg10=0.14 avg60=0.20 avg300=0.21 total=204322959
+full avg10=0.14 avg60=0.20 avg300=0.20 total=164326577
+
+/proc/pressure/io 189 2019-09-22 11:58:09 some avg10=0.48 avg60=0.26 avg300=0.22 total=204323249
+full avg10=0.48 avg60=0.26 avg300=0.22 total=164326867
+
+/proc/pressure/io 190 2019-09-22 12:00:03 some avg10=0.20 avg60=0.21 avg300=0.21 total=204820277
+full avg10=0.20 avg60=0.21 avg300=0.21 total=164822700
+
+/proc/pressure/io 191 2019-09-22 12:00:18 some avg10=0.80 avg60=0.52 avg300=0.28 total=205073706
+full avg10=0.80 avg60=0.52 avg300=0.28 total=165075686
+
+/proc/pressure/io 192 2019-09-22 12:00:20 some avg10=0.98 avg60=0.58 avg300=0.30 total=205075967
+full avg10=0.98 avg60=0.58 avg300=0.30 total=165077947
+
+/proc/pressure/io 193 2019-09-22 12:00:58 some avg10=0.16 avg60=0.39 avg300=0.28 total=205232386
+full avg10=0.16 avg60=0.39 avg300=0.28 total=165233637
+
+/proc/pressure/io 194 2019-09-22 12:03:58 some avg10=0.12 avg60=0.19 avg300=0.23 total=205865405
+full avg10=0.12 avg60=0.19 avg300=0.23 total=165864951
+
+/proc/pressure/io 195 2019-09-22 12:04:00 some avg10=0.46 avg60=0.25 avg300=0.25 total=205865544
+full avg10=0.46 avg60=0.25 avg300=0.24 total=165865089
+
+/proc/pressure/io 196 2019-09-22 12:06:48 some avg10=0.21 avg60=0.22 avg300=0.21 total=206503793
+full avg10=0.21 avg60=0.22 avg300=0.21 total=166502651
+
+/proc/pressure/io 197 2019-09-22 12:09:08 some avg10=0.12 avg60=0.18 avg300=0.20 total=206996151
+full avg10=0.12 avg60=0.18 avg300=0.20 total=166994830
+
+/proc/pressure/io 198 2019-09-22 12:09:18 some avg10=0.37 avg60=0.27 avg300=0.22 total=207070591
+full avg10=0.37 avg60=0.27 avg300=0.22 total=167069231
+
+/proc/pressure/io 199 2019-09-22 12:10:07 some avg10=0.16 avg60=0.25 avg300=0.22 total=207289342
+full avg10=0.16 avg60=0.25 avg300=0.22 total=167286515
+
+/proc/pressure/io 200 2019-09-22 12:10:58 some avg10=0.41 avg60=0.30 avg300=0.24 total=207567721
+full avg10=0.41 avg60=0.30 avg300=0.24 total=167564723
+
+/proc/pressure/io 201 2019-09-22 12:14:08 some avg10=0.12 avg60=0.18 avg300=0.21 total=208201735
+full avg10=0.12 avg60=0.18 avg300=0.21 total=168198453
+
+/proc/pressure/io 202 2019-09-22 12:14:18 some avg10=0.29 avg60=0.24 avg300=0.22 total=208263856
+full avg10=0.29 avg60=0.24 avg300=0.22 total=168260565
+
+/proc/pressure/io 203 2019-09-22 12:20:58 some avg10=0.12 avg60=0.17 avg300=0.20 total=209536184
+full avg10=0.12 avg60=0.17 avg300=0.20 total=169531738
+
+/proc/pressure/io 204 2019-09-22 12:21:09 some avg10=0.29 avg60=0.22 avg300=0.21 total=209623741
+full avg10=0.29 avg60=0.22 avg300=0.21 total=169619081
+
+/proc/pressure/io 205 2019-09-22 12:21:38 some avg10=0.15 avg60=0.25 avg300=0.21 total=209759728
+full avg10=0.15 avg60=0.25 avg300=0.21 total=169754983
+
+/proc/pressure/io 206 2019-09-22 12:23:19 some avg10=0.11 avg60=0.15 avg300=0.19 total=210073723
+full avg10=0.11 avg60=0.15 avg300=0.19 total=170067709
+
+/proc/pressure/io 207 2019-09-22 12:30:58 some avg10=0.16 avg60=0.18 avg300=0.16 total=211534419
+full avg10=0.16 avg60=0.18 avg300=0.16 total=171523770
+
+/proc/pressure/io 208 2019-09-22 12:34:59 some avg10=0.12 avg60=0.18 avg300=0.18 total=212365048
+full avg10=0.12 avg60=0.18 avg300=0.18 total=172352912
+
+/proc/pressure/io 209 2019-09-22 12:35:01 some avg10=0.82 avg60=0.31 avg300=0.21 total=212415312
+full avg10=0.82 avg60=0.31 avg300=0.21 total=172403158
+
+/proc/pressure/io 210 2019-09-22 12:36:38 some avg10=0.12 avg60=0.21 avg300=0.20 total=212752469
+full avg10=0.12 avg60=0.21 avg300=0.20 total=172739401
+
+/proc/pressure/io 211 2019-09-22 12:39:19 some avg10=0.12 avg60=0.18 avg300=0.20 total=213255760
+full avg10=0.12 avg60=0.18 avg300=0.20 total=173242395
+
+/proc/pressure/io 212 2019-09-22 12:39:19 some avg10=0.12 avg60=0.18 avg300=0.20 total=213266414
+full avg10=0.12 avg60=0.18 avg300=0.20 total=173253047
+
+/proc/pressure/io 213 2019-09-22 12:39:28 some avg10=0.29 avg60=0.24 avg300=0.21 total=213332574
+full avg10=0.29 avg60=0.24 avg300=0.21 total=173319129
+
+/proc/pressure/io 214 2019-09-22 12:40:06 some avg10=0.19 avg60=0.25 avg300=0.22 total=213521717
+full avg10=0.19 avg60=0.25 avg300=0.22 total=173507784
+
+/proc/pressure/io 215 2019-09-22 12:40:58 some avg10=0.32 avg60=0.32 avg300=0.25 total=213773696
+full avg10=0.32 avg60=0.32 avg300=0.25 total=173759144
+
+/proc/pressure/io 216 2019-09-22 12:47:38 some avg10=0.12 avg60=0.17 avg300=0.20 total=214961796
+full avg10=0.12 avg60=0.17 avg300=0.20 total=174946327
+
+/proc/pressure/io 217 2019-09-22 12:48:17 some avg10=0.12 avg60=0.19 avg300=0.20 total=215102688
+full avg10=0.12 avg60=0.19 avg300=0.20 total=175087070
+
+/proc/pressure/io 218 2019-09-22 12:50:58 some avg10=0.12 avg60=0.15 avg300=0.18 total=215582114
+full avg10=0.12 avg60=0.15 avg300=0.18 total=175565445
+
+/proc/pressure/io 219 2019-09-22 12:52:09 some avg10=0.04 avg60=0.14 avg300=0.17 total=215819755
+full avg10=0.04 avg60=0.14 avg300=0.17 total=175802903
+
+/proc/pressure/io 220 2019-09-22 12:54:38 some avg10=0.12 avg60=0.18 avg300=0.19 total=216286764
+full avg10=0.12 avg60=0.18 avg300=0.19 total=176269637
+
+/proc/pressure/io 221 2019-09-22 12:54:48 some avg10=0.29 avg60=0.23 avg300=0.20 total=216358493
+full avg10=0.29 avg60=0.23 avg300=0.20 total=176341348
+
+/proc/pressure/io 222 2019-09-22 12:55:38 some avg10=0.03 avg60=0.20 avg300=0.20 total=216550156
+full avg10=0.02 avg60=0.19 avg300=0.20 total=176525890
+
+/proc/pressure/io 223 2019-09-22 12:57:58 some avg10=0.12 avg60=0.17 avg300=0.20 total=216987885
+full avg10=0.12 avg60=0.17 avg300=0.20 total=176963146
+
+/proc/pressure/io 224 2019-09-22 12:58:09 some avg10=0.20 avg60=0.20 avg300=0.20 total=217087276
+full avg10=0.20 avg60=0.20 avg300=0.20 total=177062526
+
+/proc/pressure/io 225 2019-09-22 13:00:04 some avg10=0.07 avg60=0.12 avg300=0.18 total=217379806
+full avg10=0.07 avg60=0.12 avg300=0.18 total=177353765
+
+/proc/pressure/io 226 2019-09-22 13:00:04 some avg10=2.41 avg60=0.54 avg300=0.26 total=217615547
+full avg10=2.41 avg60=0.54 avg300=0.26 total=177589322
+
+/proc/pressure/io 227 2019-09-22 13:00:58 some avg10=0.13 avg60=0.30 avg300=0.24 total=217787703
+full avg10=0.13 avg60=0.30 avg300=0.24 total=177761360
+
+/proc/pressure/io 228 2019-09-22 13:05:08 some avg10=0.00 avg60=0.07 avg300=0.14 total=218406727
+full avg10=0.00 avg60=0.07 avg300=0.14 total=178377856
+
+/proc/pressure/io 229 2019-09-22 13:10:58 some avg10=0.12 avg60=0.14 avg300=0.14 total=219326039
+full avg10=0.12 avg60=0.12 avg300=0.13 total=179294000
+
+/proc/pressure/io 230 2019-09-22 13:14:58 some avg10=0.12 avg60=0.18 avg300=0.14 total=220116673
+full avg10=0.12 avg60=0.18 avg300=0.14 total=180083775
+
+/proc/pressure/io 231 2019-09-22 13:17:08 some avg10=0.12 avg60=0.18 avg300=0.15 total=220589447
+full avg10=0.12 avg60=0.18 avg300=0.14 total=180556382
+
+/proc/pressure/io 232 2019-09-22 13:17:19 some avg10=0.20 avg60=0.21 avg300=0.16 total=220642957
+full avg10=0.20 avg60=0.21 avg300=0.15 total=180609882
+
+/proc/pressure/io 233 2019-09-22 13:20:58 some avg10=0.12 avg60=0.17 avg300=0.14 total=221360540
+full avg10=0.12 avg60=0.17 avg300=0.14 total=181326201
+
+/proc/pressure/io 234 2019-09-22 13:23:08 some avg10=0.12 avg60=0.20 avg300=0.17 total=221900035
+full avg10=0.12 avg60=0.20 avg300=0.17 total=181865008
+
+/proc/pressure/io 235 2019-09-22 13:27:08 some avg10=0.12 avg60=0.18 avg300=0.19 total=222706841
+full avg10=0.12 avg60=0.18 avg300=0.19 total=182666927
+
+/proc/pressure/io 236 2019-09-22 13:28:38 some avg10=0.08 avg60=0.12 avg300=0.17 total=222978133
+full avg10=0.08 avg60=0.12 avg300=0.17 total=182937589
+
+/proc/pressure/io 237 2019-09-22 13:30:58 some avg10=0.17 avg60=0.20 avg300=0.19 total=223468383
+full avg10=0.17 avg60=0.20 avg300=0.19 total=183426374
+
+/proc/pressure/io 238 2019-09-22 13:33:39 some avg10=0.12 avg60=0.18 avg300=0.20 total=223996277
+full avg10=0.12 avg60=0.18 avg300=0.20 total=183953859
+
+/proc/pressure/io 239 2019-09-22 13:36:18 some avg10=0.12 avg60=0.17 avg300=0.19 total=224525825
+full avg10=0.12 avg60=0.17 avg300=0.19 total=184483098
+
+/proc/pressure/io 240 2019-09-22 13:37:08 some avg10=0.13 avg60=0.20 avg300=0.20 total=224719183
+full avg10=0.13 avg60=0.20 avg300=0.20 total=184676275
+
+/proc/pressure/io 241 2019-09-22 13:40:58 some avg10=0.14 avg60=0.19 avg300=0.20 total=225464285
+full avg10=0.14 avg60=0.19 avg300=0.20 total=185419985
+
+/proc/pressure/io 242 2019-09-22 13:44:08 some avg10=0.12 avg60=0.17 avg300=0.19 total=226025854
+full avg10=0.12 avg60=0.17 avg300=0.19 total=185981120
+
+/proc/pressure/io 243 2019-09-22 13:46:18 some avg10=0.12 avg60=0.19 avg300=0.20 total=226462388
+full avg10=0.09 avg60=0.17 avg300=0.20 total=186417064
+
+/proc/pressure/io 244 2019-09-22 13:46:54 some avg10=0.19 avg60=0.22 avg300=0.21 total=226617274
+full avg10=0.19 avg60=0.20 avg300=0.20 total=186571868
+
+/proc/pressure/io 245 2019-09-22 13:50:58 some avg10=0.12 avg60=0.17 avg300=0.19 total=227388878
+full avg10=0.12 avg60=0.17 avg300=0.19 total=187342178
+
+/proc/pressure/io 246 2019-09-22 13:52:09 some avg10=0.20 avg60=0.21 avg300=0.20 total=227647520
+full avg10=0.20 avg60=0.21 avg300=0.20 total=187600204
+
+/proc/pressure/io 247 2019-09-22 13:54:39 some avg10=0.12 avg60=0.16 avg300=0.18 total=228115278
+full avg10=0.12 avg60=0.16 avg300=0.18 total=188065616
+
+/proc/pressure/io 248 2019-09-22 13:55:48 some avg10=0.23 avg60=0.21 avg300=0.20 total=228366466
+full avg10=0.23 avg60=0.21 avg300=0.20 total=188314085
+
+/proc/pressure/io 249 2019-09-22 13:59:08 some avg10=0.12 avg60=0.18 avg300=0.18 total=228997839
+full avg10=0.12 avg60=0.18 avg300=0.18 total=188944923
+
+/proc/pressure/io 250 2019-09-22 14:00:58 some avg10=0.12 avg60=0.16 avg300=0.18 total=229360757
+full avg10=0.12 avg60=0.16 avg300=0.18 total=189306832
+
+/proc/pressure/io 251 2019-09-22 14:01:00 some avg10=0.12 avg60=0.16 avg300=0.18 total=229378782
+full avg10=0.12 avg60=0.16 avg300=0.18 total=189324848
+
+/proc/pressure/io 252 2019-09-22 14:05:01 some avg10=0.10 avg60=0.17 avg300=0.20 total=230136701
+full avg10=0.10 avg60=0.17 avg300=0.20 total=190082092
+
+/proc/pressure/io 253 2019-09-22 14:05:02 some avg10=0.10 avg60=0.17 avg300=0.20 total=230137833
+full avg10=0.10 avg60=0.17 avg300=0.20 total=190083224
+
+/proc/pressure/io 254 2019-09-22 14:10:58 some avg10=0.65 avg60=0.27 avg300=0.22 total=231215318
+full avg10=0.65 avg60=0.27 avg300=0.22 total=191158542
+
